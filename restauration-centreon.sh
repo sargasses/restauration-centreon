@@ -190,23 +190,6 @@ rm -f /tmp/lecture-bases.txt
 rm -f $fichtemp
 
 
-cat <<- EOF > $fichtemp
-select nombre_bases
-from information
-where uname='`uname -n`' and application='centreon' ;
-EOF
-
-mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/nombre-bases-lister.txt
-
-nombre_bases_lister=$(sed '$!d' /tmp/nombre-bases-lister.txt)
-rm -f /tmp/nombre-bases-lister.txt
-rm -f $fichtemp
-
-
-if [ "$nombre_bases_lister" = "" ] ; then
-nombre_bases_lister=0
-fi
-
 if [ "$lecture_user" = "" ] ; then
 	REF20=root
 else
@@ -280,13 +263,6 @@ if ! grep -w "OUI" $REPERTOIRE_CONFIG/$FICHIER_CONFIG > /dev/null ; then
 else
 	choix1="\Z2Gestion Centraliser des Taches\Zn" 
 fi
-
-if [ "$nombre_bases_lister" = "0" ] ; then
-	choix2="\Z1Configuration Bases A Sauvegarder\Zn" 
-else
-	choix2="\Z2Configuration Bases A Sauvegarder\Zn" 
-fi
-
 
 }
 
@@ -476,46 +452,8 @@ case $valret in
 	VARSAISI14=$(sed -n 6p $fichtemp)
 
 	if [ -f $VARSAISI10 ] ; then
-
-
-	if [ -f $NagiosLockFile ] ; then
-	/etc/init.d/nagios stop &> /dev/null
-	fi
-
-	if [ -f $Ndo2dbPidFile ] ; then
-	/etc/init.d/ndo2db stop &> /dev/null
-	fi
-
-	if [ -f $CentenginePidFile ] ; then
-	/etc/init.d/centengine stop &> /dev/null
-	fi
-
-	if [ -f $CbdbrokerPidFile ] || [ -f $CbdrrdPidFile ] ; then	
-	/etc/init.d/cbd stop &> /dev/null
-	fi
-
-	if [ -f $CentcorePidFile ] ; then
-	/etc/init.d/centcore stop &> /dev/null
-	fi
-
-	if [ -f $CentstoragePidFile ] ; then
-	/etc/init.d/centstorage stop &> /dev/null
-	fi
-
-	tar xvzf $VARSAISI10
-
-	rm -rf /etc/centreon/
-	rm -rf /usr/local/centreon/www/img/media/
-	rm -rf /var/lib/centreon
-
-	cp -R etc/centreon/ /etc/
-	cp -R usr/local/centreon/www/img/media/ /usr/local/centreon/www/img/
-	cp -R var/lib/centreon/ /var/lib/
-
-	rm -rf etc/
-	rm -rf usr/
-	rm -rf var/
-	
+		rm -f $fichtemp
+		restauration_centreon
 	else
 		rm -f $fichtemp
 		message_erreur
@@ -540,6 +478,78 @@ menu
 
 }
 
+
+#############################################################################
+# Fonction Restauration Centreon
+#############################################################################
+
+restauration_centreon()
+{
+
+
+if [ -f $NagiosLockFile ] ; then
+/etc/init.d/nagios stop &> /dev/null
+fi
+
+if [ -f $Ndo2dbPidFile ] ; then
+/etc/init.d/ndo2db stop &> /dev/null
+fi
+
+if [ -f $CentenginePidFile ] ; then
+/etc/init.d/centengine stop &> /dev/null
+fi
+
+if [ -f $CbdbrokerPidFile ] || [ -f $CbdrrdPidFile ] ; then	
+/etc/init.d/cbd stop &> /dev/null
+fi
+
+if [ -f $CentcorePidFile ] ; then
+/etc/init.d/centcore stop &> /dev/null
+fi
+
+if [ -f $CentstoragePidFile ] ; then
+/etc/init.d/centstorage stop &> /dev/null
+fi
+
+tar xvzf $VARSAISI10
+
+rm -rf /etc/centreon/
+rm -rf /usr/local/centreon/www/img/media/
+rm -rf /var/lib/centreon
+
+cp -R etc/centreon/ /etc/
+cp -R usr/local/centreon/www/img/media/ /usr/local/centreon/www/img/
+cp -R var/lib/centreon/ /var/lib/
+
+rm -rf etc/
+rm -rf usr/
+rm -rf var/
+
+
+	if [ -f /usr/local/nagios/bin/nagios ] ; then
+	/etc/init.d/nagios start &> /dev/null
+	fi
+
+	if [ -f /usr/local/nagios/bin/ndo2db ] ; then
+	/etc/init.d/ndo2db start &> /dev/null
+	fi
+
+	if [ -f /usr/local/centreon-engine/bin/centengine ] ; then
+	/etc/init.d/centengine start &> /dev/null
+	fi
+
+	if [ -f /usr/local/centreon-broker/etc/central-broker.xml ] ; then
+	/etc/init.d/cbd start &> /dev/null
+	fi
+
+	/etc/init.d/centcore start &> /dev/null
+
+	if [ ! -d /usr/local/centreon-broker ] ; then
+	/etc/init.d/centstorage start &> /dev/null
+	fi
+
+
+}
 
 #############################################################################
 # Demarrage du programme
