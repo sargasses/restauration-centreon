@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 02-01-2014
+# Date : 03-01-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -449,7 +449,7 @@ case $valret in
 	VARSAISI12=$(sed -n 3p $fichtemp)
 	VARSAISI13=$(sed -n 4p $fichtemp)
 	VARSAISI14=$(sed -n 5p $fichtemp)
-	VARSAISI14=$(sed -n 6p $fichtemp)
+	VARSAISI15=$(sed -n 6p $fichtemp)
 
 	if [ -f $VARSAISI10 ] ; then
 		rm -f $fichtemp
@@ -486,6 +486,8 @@ menu
 restauration_centreon()
 {
 
+fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
+
 
 if [ -f $NagiosLockFile ] ; then
 /etc/init.d/nagios stop &> /dev/null
@@ -521,9 +523,50 @@ cp -R etc/centreon/ /etc/
 cp -R usr/local/centreon/www/img/media/ /usr/local/centreon/www/img/
 cp -R var/lib/centreon/ /var/lib/
 
+
+
+
+	cat <<- EOF > $fichtemp
+	DROP DATABASE $VARSAISI13;
+	EOF
+
+	mysql -h `uname -n` -u $VARSAISI11 -p$VARSAISI12 < $fichtemp
+
+	rm -f $fichtemp
+
+	mysql -h `uname -n` -u $VARSAISI11 -p$VARSAISI12 < /root/dump/$VARSAISI13.sql
+
+
+
+	cat <<- EOF > $fichtemp
+	DROP DATABASE $VARSAISI14;
+	EOF
+
+	mysql -h `uname -n` -u $VARSAISI11 -p$VARSAISI12 < $fichtemp
+
+	rm -f $fichtemp
+
+	mysql -h `uname -n` -u $VARSAISI11 -p$VARSAISI12 < /root/dump/$VARSAISI14.sql
+
+
+
+	cat <<- EOF > $fichtemp
+	DROP DATABASE $VARSAISI15;
+	EOF
+
+	mysql -h `uname -n` -u $VARSAISI11 -p$VARSAISI12 < $fichtemp
+
+	rm -f $fichtemp
+
+	mysql -h `uname -n` -u $VARSAISI11 -p$VARSAISI12 < /root/dump/$VARSAISI15.sql
+
+
+
 rm -rf etc/
 rm -rf usr/
 rm -rf var/
+rm -rf dump/
+
 
 
 	if [ -f /usr/local/nagios/bin/nagios ] ; then
