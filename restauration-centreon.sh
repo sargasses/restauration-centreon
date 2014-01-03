@@ -489,42 +489,53 @@ restauration_centreon()
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
 
-if [ -f $NagiosLockFile ] ; then
-/etc/init.d/nagios stop &> /dev/null
-fi
+(
 
-if [ -f $Ndo2dbPidFile ] ; then
-/etc/init.d/ndo2db stop &> /dev/null
-fi
+ echo "20" ; sleep 1
+ echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
 
-if [ -f $CentenginePidFile ] ; then
-/etc/init.d/centengine stop &> /dev/null
-fi
+	if [ -f $NagiosLockFile ] ; then
+	/etc/init.d/nagios stop &> /dev/null
+	fi
 
-if [ -f $CbdbrokerPidFile ] || [ -f $CbdrrdPidFile ] ; then	
-/etc/init.d/cbd stop &> /dev/null
-fi
+	if [ -f $Ndo2dbPidFile ] ; then
+	/etc/init.d/ndo2db stop &> /dev/null
+	fi
 
-if [ -f $CentcorePidFile ] ; then
-/etc/init.d/centcore stop &> /dev/null
-fi
+	if [ -f $CentenginePidFile ] ; then
+	/etc/init.d/centengine stop &> /dev/null
+	fi
 
-if [ -f $CentstoragePidFile ] ; then
-/etc/init.d/centstorage stop &> /dev/null
-fi
+	if [ -f $CbdbrokerPidFile ] || [ -f $CbdrrdPidFile ] ; then	
+	/etc/init.d/cbd stop &> /dev/null
+	fi
 
-tar xvzf $VARSAISI10
+	if [ -f $CentcorePidFile ] ; then
+	/etc/init.d/centcore stop &> /dev/null
+	fi
 
-rm -rf /etc/centreon/
-rm -rf /usr/local/centreon/www/img/media/
-rm -rf /var/lib/centreon
+	if [ -f $CentstoragePidFile ] ; then
+	/etc/init.d/centstorage stop &> /dev/null
+	fi
 
-cp -R etc/centreon/ /etc/
-cp -R usr/local/centreon/www/img/media/ /usr/local/centreon/www/img/
-cp -R var/lib/centreon/ /var/lib/
+ echo "40" ; sleep 1
+ echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
 
+	tar xvzf $VARSAISI10 &> /dev/null
 
+ echo "50" ; sleep 1
+ echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
+	
+	rm -rf /etc/centreon/
+	rm -rf /usr/local/centreon/www/img/media/
+	rm -rf /var/lib/centreon
 
+	cp -R etc/centreon/ /etc/
+	cp -R usr/local/centreon/www/img/media/ /usr/local/centreon/www/img/
+	cp -R var/lib/centreon/ /var/lib/
+
+ echo "60" ; sleep 1
+ echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
 
 	cat <<- EOF > $fichtemp
 	DROP DATABASE $VARSAISI13;
@@ -560,14 +571,16 @@ cp -R var/lib/centreon/ /var/lib/
 
 	mysql -h `uname -n` -u $VARSAISI11 -p$VARSAISI12 < /root/dump/$VARSAISI15.sql
 
+ echo "80" ; sleep 1
+ echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
 
+	rm -rf etc/
+	rm -rf usr/
+	rm -rf var/
+	rm -rf dump/
 
-rm -rf etc/
-rm -rf usr/
-rm -rf var/
-rm -rf dump/
-
-
+ echo "90" ; sleep 1
+ echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
 
 	if [ -f /usr/local/nagios/bin/nagios ] ; then
 	/etc/init.d/nagios start &> /dev/null
@@ -590,7 +603,14 @@ rm -rf dump/
 	if [ ! -d /usr/local/centreon-broker ] ; then
 	/etc/init.d/centstorage start &> /dev/null
 	fi
-
+	
+ echo "100" ; sleep 1
+ echo "XXX" ; echo "Terminer"; echo "XXX"
+ sleep 2
+) |
+$DIALOG  --backtitle "Configuration Restauration Centreon" \
+	  --title "Configuration Restauration Centreon" \
+	  --gauge "Restauration en cours veuillez patienter" 10 62 0 \
 
 }
 
