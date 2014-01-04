@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 03-01-2014
+# Date : 04-01-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -534,6 +534,9 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	cp -R usr/local/centreon/www/img/media/ /usr/local/centreon/www/img/
 	cp -R var/lib/centreon/ /var/lib/
 
+	chown -R centreon:centreon  /var/lib/centreon
+	chmod -R 775 /var/lib/centreon
+	
  echo "60" ; sleep 1
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
 
