@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 04-01-2014
+# Date : 08-01-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -528,11 +528,28 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	
 	rm -rf /etc/centreon/
 	rm -rf /usr/local/centreon/www/img/media/
-	rm -rf /var/lib/centreon
+	rm -rf /var/lib/centreon/
+
+	if [ -d /usr/local/nagios/libexec ] ; then
+	rm -rf /usr/local/nagios/libexec/
+	fi
+
+	if [ -d /usr/local/centreon-plugins/libexec ] ; then
+	rm -rf /usr/local/centreon-plugins/libexec/
+	fi
+
 
 	cp -R etc/centreon/ /etc/
 	cp -R usr/local/centreon/www/img/media/ /usr/local/centreon/www/img/
 	cp -R var/lib/centreon/ /var/lib/
+
+	if [ -d usr/local/nagios/libexec ] ; then
+	cp -R usr/local/nagios/libexec/ /usr/local/nagios/ 
+	fi
+
+	if [ -d usr/local/centreon-plugins/libexec ] ; then
+	cp -R usr/local/centreon-plugins/libexec/ /usr/local/centreon-plugins/
+	fi
 
 	chown -R centreon:centreon  /var/lib/centreon
 	chmod -R 775 /var/lib/centreon
