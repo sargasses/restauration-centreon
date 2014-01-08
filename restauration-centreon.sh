@@ -539,20 +539,22 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	fi
 
 
-	cp -R etc/centreon/ /etc/
-	cp -R usr/local/centreon/www/img/media/ /usr/local/centreon/www/img/
-	cp -R var/lib/centreon/ /var/lib/
+	cp -Rp etc/centreon/ /etc/
+	cp -Rp usr/local/centreon/www/img/media/ /usr/local/centreon/www/img/
+	cp -Rp var/lib/centreon/ /var/lib/
 
 	if [ -d usr/local/nagios/libexec ] ; then
-	cp -R usr/local/nagios/libexec/ /usr/local/nagios/ 
+	cp -Rp usr/local/nagios/libexec/ /usr/local/nagios/ 
 	fi
 
 	if [ -d usr/local/centreon-plugins/libexec ] ; then
-	cp -R usr/local/centreon-plugins/libexec/ /usr/local/centreon-plugins/
+	cp -Rp usr/local/centreon-plugins/libexec/ /usr/local/centreon-plugins/
 	fi
+
 
 	chown -R centreon:centreon  /var/lib/centreon
 	chmod -R 775 /var/lib/centreon
+
 	
  echo "60" ; sleep 1
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
