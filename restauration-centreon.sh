@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 08-01-2014
+# Date : 12-01-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -134,7 +134,6 @@ fi
 
 }
 
-
 #############################################################################
 # Fonction Lecture Des Valeurs Dans La Base de Donnée
 #############################################################################
@@ -150,7 +149,7 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 cat <<- EOF > $fichtemp
 select user
 from sauvegarde_bases
-where uname='`uname -n`' and application='centreon' ;
+where uname='$choix_serveur' and application='centreon' ;
 EOF
 
 mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-user.txt
@@ -162,7 +161,7 @@ rm -f $fichtemp
 cat <<- EOF > $fichtemp
 select password
 from sauvegarde_bases
-where uname='`uname -n`' and application='centreon' ;
+where uname='$choix_serveur' and application='centreon' ;
 EOF
 
 mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-password.txt
@@ -175,8 +174,7 @@ rm -f $fichtemp
 cat <<- EOF > $fichtemp
 select base
 from sauvegarde_bases
-where uname='`uname -n`' and application='centreon' ;
-
+where uname='$choix_serveur' and application='centreon' ;
 EOF
 
 mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-bases.txt
@@ -220,9 +218,7 @@ else
 	REF24=$lecture_bases_no3
 fi
 
-
 }
-
 
 #############################################################################
 # Fonction Message d'erreur
@@ -306,7 +302,7 @@ case $valret in
 	then
 		if [ "$VAR15" = "OUI" ] ; then
 			rm -f $fichtemp
-			menu_configuration_restauration_centreon
+			menu_choix_serveur
 		else
 			rm -f $fichtemp
 			message_erreur
@@ -416,6 +412,68 @@ menu
 }
 
 #############################################################################
+# Fonction Menu Choix Serveur
+#############################################################################
+
+menu_choix_serveur()
+{
+
+lecture_config_centraliser
+
+fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
+
+
+$DIALOG  --backtitle "Configuration Restauration Centreon" \
+	  --title "Configuration Restauration Centreon" \
+	  --form "Quel est votre choix" 8 50 1 \
+	  "Restauration Serveur:"  1 1  "`uname -n`"   1 24 20 0  2> $fichtemp
+
+
+valret=$?
+choix_serveur=`cat $fichtemp`
+case $valret in
+
+ 0)	# Choix Restauration Serveur
+	cat <<- EOF > $fichtemp
+	select uname
+	from sauvegarde_bases
+	where uname='$choix_serveur' and application='centreon' ;
+	EOF
+
+	mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-serveur.txt
+
+	lecture_serveur=$(sed '$!d' /tmp/lecture-serveur.txt)
+
+	if grep -w "^$choix_serveur" /tmp/lecture-serveur.txt > /dev/null ; then
+	rm -f /tmp/lecture-serveur.txt
+	rm -f $fichtemp
+	menu_configuration_restauration_centreon
+
+	else
+	rm -f /tmp/lecture-serveur.txt
+	rm -f $fichtemp
+	message_erreur
+	fi
+	
+	;;
+
+ 1)	# Appuyé sur Touche CTRL C
+	echo "Appuyé sur Touche CTRL C."
+	;;
+
+ 255)	# Appuyé sur Touche Echap
+	echo "Appuyé sur Touche Echap."
+	;;
+
+esac
+
+rm -f $fichtemp
+
+menu
+
+}
+
+#############################################################################
 # Fonction Menu Configuration Restauration Centreon
 #############################################################################
 
@@ -444,14 +502,14 @@ choix=`cat $fichtemp`
 case $valret in
 
  0)	# Configuration Restauration Centreon
-	VARSAISI10=$(sed -n 1p $fichtemp)
-	VARSAISI11=$(sed -n 2p $fichtemp)
-	VARSAISI12=$(sed -n 3p $fichtemp)
-	VARSAISI13=$(sed -n 4p $fichtemp)
-	VARSAISI14=$(sed -n 5p $fichtemp)
-	VARSAISI15=$(sed -n 6p $fichtemp)
+	VARSAISI20=$(sed -n 1p $fichtemp)
+	VARSAISI21=$(sed -n 2p $fichtemp)
+	VARSAISI22=$(sed -n 3p $fichtemp)
+	VARSAISI23=$(sed -n 4p $fichtemp)
+	VARSAISI24=$(sed -n 5p $fichtemp)
+	VARSAISI25=$(sed -n 6p $fichtemp)
 
-	if [ -f $VARSAISI10 ] ; then
+	if [ -f $VARSAISI20 ] ; then
 		rm -f $fichtemp
 		restauration_centreon
 	else
@@ -478,7 +536,6 @@ menu
 
 }
 
-
 #############################################################################
 # Fonction Restauration Centreon
 #############################################################################
@@ -487,7 +544,6 @@ restauration_centreon()
 {
 
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
-
 
 (
 
@@ -560,38 +616,52 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
 
 	cat <<- EOF > $fichtemp
-	DROP DATABASE $VARSAISI13;
+	SHOW DATABASES;
 	EOF
 
-	mysql -h `uname -n` -u $VARSAISI11 -p$VARSAISI12 < $fichtemp
+	mysql -h $VARSAISI10 -P $VARSAISI11 -u $VARSAISI13 -p$VARSAISI14 < /tmp/databases.txt &>/tmp/drop-bases.txt
+
+	sed -i '1d' /tmp/drop-bases.txt
+
+	drop_bases_no1=$(sed -n '1p' /tmp/drop-bases.txt)
+	drop_bases_no2=$(sed -n '2p' /tmp/drop-bases.txt)
+	drop_bases_no3=$(sed -n '3p' /tmp/drop-bases.txt)
+	rm -f /tmp/drop-bases.txt
+	rm -f $fichtemp
+
+	cat <<- EOF > $fichtemp
+	DROP DATABASE $drop_bases_no1;
+	EOF
+
+	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
 
 	rm -f $fichtemp
 
-	mysql -h `uname -n` -u $VARSAISI11 -p$VARSAISI12 < /root/dump/$VARSAISI13.sql
+	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < /root/dump/$VARSAISI23.sql
 
 
 
 	cat <<- EOF > $fichtemp
-	DROP DATABASE $VARSAISI14;
+	DROP DATABASE $drop_bases_no2;
 	EOF
 
-	mysql -h `uname -n` -u $VARSAISI11 -p$VARSAISI12 < $fichtemp
+	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
 
 	rm -f $fichtemp
 
-	mysql -h `uname -n` -u $VARSAISI11 -p$VARSAISI12 < /root/dump/$VARSAISI14.sql
+	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < /root/dump/$VARSAISI24.sql
 
 
 
 	cat <<- EOF > $fichtemp
-	DROP DATABASE $VARSAISI15;
+	DROP DATABASE $drop_bases_no3;
 	EOF
 
-	mysql -h `uname -n` -u $VARSAISI11 -p$VARSAISI12 < $fichtemp
+	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
 
 	rm -f $fichtemp
 
-	mysql -h `uname -n` -u $VARSAISI11 -p$VARSAISI12 < /root/dump/$VARSAISI15.sql
+	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < /root/dump/$VARSAISI25.sql
 
  echo "80" ; sleep 1
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
