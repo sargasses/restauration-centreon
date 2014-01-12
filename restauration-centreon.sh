@@ -426,7 +426,7 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 $DIALOG  --backtitle "Configuration Restauration Centreon" \
 	  --title "Configuration Restauration Centreon" \
 	  --form "Quel est votre choix" 8 50 1 \
-	  "Restauration Serveur:"  1 1  "`uname -n`"   1 24 20 0  2> $fichtemp
+	  "Restauration Serveur:"  1 1  "`uname -n`"   1 23 20 0  2> $fichtemp
 
 
 valret=$?
@@ -577,7 +577,7 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
  echo "40" ; sleep 1
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
 
-	tar xvzf $VARSAISI10 &> /dev/null
+	tar xvzf $VARSAISI20 &> /dev/null
 
  echo "50" ; sleep 1
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
