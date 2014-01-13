@@ -531,8 +531,28 @@ restauration_centreon()
 
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
-(
 
+(
+ echo "10" ; sleep 1
+) |
+$DIALOG  --backtitle "Configuration Restauration Centreon" \
+	  --title "Configuration Restauration Centreon" \
+	  --gauge "Restauration en cours veuillez patienter" 10 62 0 \
+
+	tar xvzf $VARSAISI20 &> /dev/null
+	PLATEFORME_DISTANT=`cat platforme/platforme.txt`
+
+	if [ $PLATEFORME_LOCAL -ne $PLATEFORME_DISTANT ] ; then
+	rm -rf etc/
+	rm -rf usr/
+	rm -rf var/
+	rm -rf dump/
+	rm -rf platforme/
+	message_erreur
+	menu
+	fi
+
+(
  echo "20" ; sleep 1
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
 
@@ -560,12 +580,7 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	/etc/init.d/centstorage stop &> /dev/null
 	fi
 
- echo "40" ; sleep 1
- echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
-
-	tar xvzf $VARSAISI20 &> /dev/null
-
- echo "50" ; sleep 1
+ echo "30" ; sleep 1
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
 	
 	rm -rf /etc/centreon/
@@ -597,26 +612,11 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	chown -R centreon:centreon  /var/lib/centreon
 	chmod -R 775 /var/lib/centreon
 
-	
  echo "60" ; sleep 1
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
 
 	cat <<- EOF > $fichtemp
-	SHOW DATABASES;
-	EOF
-
-	mysql -h $VARSAISI10 -P $VARSAISI11 -u $VARSAISI13 -p$VARSAISI14 < /tmp/databases.txt &>/tmp/drop-bases.txt
-
-	sed -i '1d' /tmp/drop-bases.txt
-
-	drop_bases_no1=$(sed -n '1p' /tmp/drop-bases.txt)
-	drop_bases_no2=$(sed -n '2p' /tmp/drop-bases.txt)
-	drop_bases_no3=$(sed -n '3p' /tmp/drop-bases.txt)
-	rm -f /tmp/drop-bases.txt
-	rm -f $fichtemp
-
-	cat <<- EOF > $fichtemp
-	DROP DATABASE $drop_bases_no1;
+	DROP DATABASE $VARSAISI23;
 	EOF
 
 	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
@@ -628,7 +628,7 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
 
 	cat <<- EOF > $fichtemp
-	DROP DATABASE $drop_bases_no2;
+	DROP DATABASE $VARSAISI24;
 	EOF
 
 	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
@@ -640,7 +640,7 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
 
 	cat <<- EOF > $fichtemp
-	DROP DATABASE $drop_bases_no3;
+	DROP DATABASE $VARSAISI25;
 	EOF
 
 	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
@@ -656,6 +656,8 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 	rm -rf usr/
 	rm -rf var/
 	rm -rf dump/
+	rm -rf platforme/
+
 
  echo "90" ; sleep 1
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
