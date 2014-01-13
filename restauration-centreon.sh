@@ -200,35 +200,11 @@ rm -f /tmp/lecture-bases.txt
 rm -f $fichtemp
 
 
-if [ "$lecture_user" = "" ] ; then
-	REF20=root
-else
-	REF20=$lecture_user
-fi
-
-if [ "$lecture_password" = "" ] ; then
-	REF21=directory
-else
-	REF21=$lecture_password
-fi
-
-if [ "$lecture_bases_no1" = "" ] ; then
-	REF22=centreon
-else
-	REF22=$lecture_bases_no1
-fi
-
-if [ "$lecture_bases_no2" = "" ] ; then
-	REF23=centstorage
-else
-	REF23=$lecture_bases_no2
-fi
-
-if [ "$lecture_bases_no3" = "" ] ; then
-	REF24=centstatus
-else
-	REF24=$lecture_bases_no3
-fi
+REF20=$lecture_user
+REF21=$lecture_password
+REF22=$lecture_bases_no1
+REF23=$lecture_bases_no2
+REF24=$lecture_bases_no3
 
 }
 
