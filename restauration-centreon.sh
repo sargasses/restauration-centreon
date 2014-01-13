@@ -352,10 +352,10 @@ $DIALOG  --backtitle "Configuration Restauration Centreon" \
 	  --title "Gestion Centraliser des Sauvegardes" \
 	  --mixedform "Quel est votre choix" 11 60 0 \
 	  "Nom Serveur:"     1 1  "$REF10"  1 20  30 28 0  \
-	  "Port Serveur:"    2 1  "$REF11"  2 20  30 26 0  \
-	  "Base de Donnees:" 3 1  "$REF12"  3 20  30 26 0  \
-	  "Compte Root:"     4 1  "$REF13"  4 20  30 26 0  \
-	  "Password Root:"   5 1  "$REF14"  5 20  30 26 1  2> $fichtemp
+	  "Port Serveur:"    2 1  "$REF11"  2 20  30 28 0  \
+	  "Base de Donnees:" 3 1  "$REF12"  3 20  30 28 0  \
+	  "Compte Root:"     4 1  "$REF13"  4 20  30 28 0  \
+	  "Password Root:"   5 1  "$REF14"  5 20  30 28 1  2> $fichtemp
 
 
 valret=$?
