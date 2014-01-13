@@ -16,7 +16,7 @@
 DIALOG=${DIALOG=dialog}
 
 REPERTOIRE_CONFIG=/usr/local/scripts/config
-FICHIER_CONFIG=config_centralisation_sauvegarde
+FICHIER_CENTRALISATION_SAUVEGARDE=config_centralisation_sauvegarde
 
 DATE_HEURE=`date +%d.%m.%y`-`date +%H`h`date +%M`
 
@@ -59,19 +59,19 @@ fi
 
 
 #############################################################################
-# Fonction Lecture Fichier Configuration Gestion Centraliser
+# Fonction Lecture Fichier Configuration Gestion Centraliser Sauvegarde
 #############################################################################
 
-lecture_config_centraliser()
+lecture_config_centraliser_sauvegarde()
 {
 
-if test -e $REPERTOIRE_CONFIG/$FICHIER_CONFIG ; then
+if test -e $REPERTOIRE_CONFIG/$FICHIER_CENTRALISATION_SAUVEGARDE ; then
 
 num=10
 while [ "$num" -le 15 ] 
 	do
 	VAR=VAR$num
-	VAL1=`cat $REPERTOIRE_CONFIG/$FICHIER_CONFIG | grep $VAR=`
+	VAL1=`cat $REPERTOIRE_CONFIG/$FICHIER_CENTRALISATION_SAUVEGARDE | grep $VAR=`
 	VAL2=`expr length "$VAL1"`
 	VAL3=`expr substr "$VAL1" 7 $VAL2`
 	eval VAR$num="$VAL3"
@@ -85,7 +85,7 @@ mkdir -p $REPERTOIRE_CONFIG
 num=10
 while [ "$num" -le 15 ] 
 	do
-	echo "VAR$num=" >> $REPERTOIRE_CONFIG/$FICHIER_CONFIG
+	echo "VAR$num=" >> $REPERTOIRE_CONFIG/$FICHIER_CENTRALISATION_SAUVEGARDE
 	num=`expr $num + 1`
 	done
 
@@ -93,7 +93,7 @@ num=10
 while [ "$num" -le 15 ] 
 	do
 	VAR=VALFIC$num
-	VAL1=`cat $REPERTOIRE_CONFIG/$FICHIER_CONFIG | grep $VAR=`
+	VAL1=`cat $REPERTOIRE_CONFIG/$FICHIER_CENTRALISATION_SAUVEGARDE | grep $VAR=`
 	VAL2=`expr length "$VAL1"`
 	VAL3=`expr substr "$VAL1" 7 $VAL2`
 	eval VAR$num="$VAL3"
@@ -141,7 +141,7 @@ fi
 lecture_valeurs_base_donnees()
 {
 
-lecture_config_centraliser
+lecture_config_centraliser_sauvegarde
 
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
@@ -254,7 +254,7 @@ verification_couleur()
 
 # 0=noir, 1=rouge, 2=vert, 3=jaune, 4=bleu, 5=magenta, 6=cyan 7=blanc
 
-if ! grep -w "OUI" $REPERTOIRE_CONFIG/$FICHIER_CONFIG > /dev/null ; then
+if ! grep -w "OUI" $REPERTOIRE_CONFIG/$FICHIER_CENTRALISATION_SAUVEGARDE > /dev/null ; then
 	choix1="\Z1Gestion Centraliser des Sauvegardes\Zn" 
 else
 	choix1="\Z2Gestion Centraliser des Sauvegardes\Zn" 
@@ -269,7 +269,7 @@ fi
 menu()
 {
 
-lecture_config_centraliser
+lecture_config_centraliser_sauvegarde
 verification_couleur
 
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
@@ -342,7 +342,7 @@ exit
 menu_gestion_centraliser_sauvegardes()
 {
 
-lecture_config_centraliser
+lecture_config_centraliser_sauvegarde
 
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
@@ -370,11 +370,11 @@ case $valret in
 	VARSAISI14=$(sed -n 5p $fichtemp)
 	
 
-	sed -i "s/VAR10=$VAR10/VAR10=$VARSAISI10/g" $REPERTOIRE_CONFIG/$FICHIER_CONFIG
-	sed -i "s/VAR11=$VAR11/VAR11=$VARSAISI11/g" $REPERTOIRE_CONFIG/$FICHIER_CONFIG
-	sed -i "s/VAR12=$VAR12/VAR12=$VARSAISI12/g" $REPERTOIRE_CONFIG/$FICHIER_CONFIG
-	sed -i "s/VAR13=$VAR13/VAR13=$VARSAISI13/g" $REPERTOIRE_CONFIG/$FICHIER_CONFIG
-	sed -i "s/VAR14=$VAR14/VAR14=$VARSAISI14/g" $REPERTOIRE_CONFIG/$FICHIER_CONFIG
+	sed -i "s/VAR10=$VAR10/VAR10=$VARSAISI10/g" $REPERTOIRE_CONFIG/$FICHIER_CENTRALISATION_SAUVEGARDE
+	sed -i "s/VAR11=$VAR11/VAR11=$VARSAISI11/g" $REPERTOIRE_CONFIG/$FICHIER_CENTRALISATION_SAUVEGARDE
+	sed -i "s/VAR12=$VAR12/VAR12=$VARSAISI12/g" $REPERTOIRE_CONFIG/$FICHIER_CENTRALISATION_SAUVEGARDE
+	sed -i "s/VAR13=$VAR13/VAR13=$VARSAISI13/g" $REPERTOIRE_CONFIG/$FICHIER_CENTRALISATION_SAUVEGARDE
+	sed -i "s/VAR14=$VAR14/VAR14=$VARSAISI14/g" $REPERTOIRE_CONFIG/$FICHIER_CENTRALISATION_SAUVEGARDE
 
       
 	cat <<- EOF > /tmp/databases.txt
@@ -384,10 +384,10 @@ case $valret in
 	mysql -h $VARSAISI10 -P $VARSAISI11 -u $VARSAISI13 -p$VARSAISI14 < /tmp/databases.txt &>/tmp/resultat.txt
 
 	if grep -w "^$VARSAISI12" /tmp/resultat.txt > /dev/null ; then
-	sed -i "s/VAR15=$VAR15/VAR15=OUI/g" $REPERTOIRE_CONFIG/$FICHIER_CONFIG
+	sed -i "s/VAR15=$VAR15/VAR15=OUI/g" $REPERTOIRE_CONFIG/$FICHIER_CENTRALISATION_SAUVEGARDE
 
 	else
-	sed -i "s/VAR15=$VAR15/VAR15=NON/g" $REPERTOIRE_CONFIG/$FICHIER_CONFIG
+	sed -i "s/VAR15=$VAR15/VAR15=NON/g" $REPERTOIRE_CONFIG/$FICHIER_CENTRALISATION_SAUVEGARDE
 	message_erreur
 	fi
 
@@ -417,8 +417,6 @@ menu
 
 menu_choix_serveur()
 {
-
-lecture_config_centraliser
 
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
