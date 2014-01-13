@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 12-01-2014
+# Date : 13-01-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -255,9 +255,9 @@ verification_couleur()
 # 0=noir, 1=rouge, 2=vert, 3=jaune, 4=bleu, 5=magenta, 6=cyan 7=blanc
 
 if ! grep -w "OUI" $REPERTOIRE_CONFIG/$FICHIER_CONFIG > /dev/null ; then
-	choix1="\Z1Gestion Centraliser des Taches\Zn" 
+	choix1="\Z1Gestion Centraliser des Sauvegardes\Zn" 
 else
-	choix1="\Z2Gestion Centraliser des Taches\Zn" 
+	choix1="\Z2Gestion Centraliser des Sauvegardes\Zn" 
 fi
 
 }
@@ -280,7 +280,7 @@ $DIALOG  --backtitle "Configuration Restauration Centreon" \
 	  --clear \
 	  --colors \
 	  --default-item "3" \
-	  --menu "Quel est votre choix" 12 56 4 \
+	  --menu "Quel est votre choix" 12 60 4 \
 	  "1" "$choix1" \
 	  "2" "Configuration Restauration Centreon" \
 	  "3" "Quitter" 2> $fichtemp
@@ -294,7 +294,7 @@ case $valret in
 	if [ "$choix" = "1" ]
 	then
 		rm -f $fichtemp
-              menu_gestion_centraliser_taches
+              menu_gestion_centraliser_sauvegardes
 	fi
 
 	# Configuration Restauration Centreon
@@ -336,10 +336,10 @@ exit
 }
 
 #############################################################################
-# Fonction Menu Gestion Centraliser des Taches
+# Fonction Menu Gestion Centraliser des Sauvegardes
 #############################################################################
 
-menu_gestion_centraliser_taches()
+menu_gestion_centraliser_sauvegardes()
 {
 
 lecture_config_centraliser
@@ -349,20 +349,20 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
 $DIALOG  --backtitle "Configuration Restauration Centreon" \
 	  --insecure \
-	  --title "Gestion Centraliser des Taches" \
+	  --title "Gestion Centraliser des Sauvegardes" \
 	  --mixedform "Quel est votre choix" 11 60 0 \
-	  "Nom Serveur:"     1 1  "$REF10"  1 24  28 26 0  \
-	  "Port Serveur:"    2 1  "$REF11"  2 24  28 26 0  \
-	  "Base de Donnees:" 3 1  "$REF12"  3 24  28 26 0  \
-	  "Compte Root:"     4 1  "$REF13"  4 24  28 26 0  \
-	  "Password Root:"   5 1  "$REF14"  5 24  28 26 1  2> $fichtemp
+	  "Nom Serveur:"     1 1  "$REF10"  1 20  30 28 0  \
+	  "Port Serveur:"    2 1  "$REF11"  2 20  30 26 0  \
+	  "Base de Donnees:" 3 1  "$REF12"  3 20  30 26 0  \
+	  "Compte Root:"     4 1  "$REF13"  4 20  30 26 0  \
+	  "Password Root:"   5 1  "$REF14"  5 20  30 26 1  2> $fichtemp
 
 
 valret=$?
 choix=`cat $fichtemp`
 case $valret in
 
- 0)	# Gestion Centraliser des Taches
+ 0)	# Gestion Centraliser des Sauvegardes
 	VARSAISI10=$(sed -n 1p $fichtemp)
 	VARSAISI11=$(sed -n 2p $fichtemp)
 	VARSAISI12=$(sed -n 3p $fichtemp)
