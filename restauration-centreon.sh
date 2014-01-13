@@ -290,7 +290,7 @@ valret=$?
 choix=`cat $fichtemp`
 case $valret in
 
- 0)	# Gestion Centraliser des Taches
+ 0)	# Gestion Centraliser des Sauvegardes
 	if [ "$choix" = "1" ]
 	then
 		rm -f $fichtemp
