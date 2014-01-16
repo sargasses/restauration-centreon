@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 13-01-2014
+# Date : 16-01-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -218,6 +218,54 @@ message_erreur()
 cat <<- EOF > /tmp/erreur
 Veuillez vous assurer que les parametres saisie
                 sont correcte
+EOF
+
+erreur=`cat /tmp/erreur`
+
+$DIALOG --ok-label "Quitter" \
+	 --colors \
+	 --backtitle "Parametrage Serveur Centreon" \
+	 --title "Erreur" \
+	 --msgbox  "\Z1$erreur\Zn" 6 52 
+
+rm -f /tmp/erreur
+
+}
+
+#############################################################################
+# Fonction Message d'erreur platforme
+#############################################################################
+
+message_erreur_platforme()
+{
+	
+cat <<- EOF > /tmp/erreur
+Veuillez vous assurer que la platforme utiliser
+                  sont correcte
+EOF
+
+erreur=`cat /tmp/erreur`
+
+$DIALOG --ok-label "Quitter" \
+	 --colors \
+	 --backtitle "Parametrage Serveur Centreon" \
+	 --title "Erreur" \
+	 --msgbox  "\Z1$erreur\Zn" 6 52 
+
+rm -f /tmp/erreur
+
+}
+
+#############################################################################
+# Fonction Message d'erreur engine
+#############################################################################
+
+message_erreur_engine()
+{
+	
+cat <<- EOF > /tmp/erreur
+Veuillez vous assurer que les logigiels utiliser
+                  sont correcte
 EOF
 
 erreur=`cat /tmp/erreur`
@@ -543,13 +591,38 @@ $DIALOG  --backtitle "Configuration Restauration Centreon" \
 	PLATEFORME_DISTANT=`cat platforme/platforme.txt`
 
 	if [ $PLATEFORME_LOCAL -ne $PLATEFORME_DISTANT ] ; then
-	rm -rf etc/
-	rm -rf usr/
-	rm -rf var/
-	rm -rf dump/
-	rm -rf platforme/
-	message_erreur
-	menu
+		rm -rf etc/
+		rm -rf usr/
+		rm -rf var/
+		rm -rf dump/
+		rm -rf platforme/
+		message_erreur_platforme
+		menu
+	fi
+
+
+	if [ -f /etc/centreon/instCentWeb.conf ] ; then
+		grep "^MONITORINGENGINE_ETC=" /etc/centreon/instCentWeb.conf  > $fichtemp
+		sed -i "s/MONITORINGENGINE_ETC=//g" $fichtemp
+		ENGINE_LOCAL=`cat $fichtemp` 
+		rm -f $fichtemp
+	fi
+
+	if [ -f etc/centreon/instCentWeb.conf ] ; then
+		grep "^MONITORINGENGINE_ETC=" etc/centreon/instCentWeb.conf  > $fichtemp
+		sed -i "s/MONITORINGENGINE_ETC=//g" $fichtemp
+		ENGINE_DISTANT=`cat $fichtemp` 
+		rm -f $fichtemp
+	fi
+
+	if [ "$ENGINE_LOCAL" != "$ENGINE_DISTANT" ] ; then
+		rm -rf etc/
+		rm -rf usr/
+		rm -rf var/
+		rm -rf dump/
+		rm -rf platforme/
+		message_erreur_engine
+		menu
 	fi
 
 (
