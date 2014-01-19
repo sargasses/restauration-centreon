@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 16-01-2014
+# Date : 19-01-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -152,8 +152,6 @@ fi
 
 lecture_valeurs_base_donnees()
 {
-
-lecture_config_centraliser_sauvegarde
 
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
@@ -468,27 +466,70 @@ choix_serveur=`cat $fichtemp`
 case $valret in
 
  0)	# Choix Restauration Serveur
-	cat <<- EOF > $fichtemp
-	select uname
-	from sauvegarde_bases
-	where uname='$choix_serveur' and application='centreon' ;
-	EOF
+	
+	if [ "$choix_serveur" != `uname -n` ] ; then
+	
+		cat <<- EOF > $fichtemp
+		select uname
+		from information
+		where uname='$choix_serveur' and application='centreon' ;
+		EOF
 
-	mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-serveur.txt
+		mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-serveur-distant.txt
 
-	lecture_serveur=$(sed '$!d' /tmp/lecture-serveur.txt)
+		lecture_serveur_distant=$(sed '$!d' /tmp/lecture-serveur-distant.txt)
 
-	if grep -w "^$choix_serveur" /tmp/lecture-serveur.txt > /dev/null ; then
-	rm -f /tmp/lecture-serveur.txt
-	rm -f $fichtemp
-	menu_configuration_restauration_centreon
+		rm -f $fichtemp
+
+		cat <<- EOF > $fichtemp
+		select uname
+		from information
+		where uname='`uname -n`' and application='centreon' ;
+		EOF
+
+		mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-serveur-local.txt
+
+		lecture_serveur_local=$(sed '$!d' /tmp/lecture-serveur-local.txt)
+		
+		rm -f $fichtemp
+
+
+		if grep -w "^$choix_serveur" /tmp/lecture-serveur-distant.txt > /dev/null &&
+		   grep -w "^`uname -n`" /tmp/lecture-serveur-local.txt > /dev/null ; then
+
+			rm -f /tmp/lecture-serveur-distant.txt
+			rm -f /tmp/lecture-serveur-local.txt
+			menu_configuration_restauration_centreon
+		else
+			rm -f /tmp/lecture-serveur-distant.txt
+			rm -f /tmp/lecture-serveur-local.txt
+			message_erreur
+		fi	
 
 	else
-	rm -f /tmp/lecture-serveur.txt
-	rm -f $fichtemp
-	message_erreur
+
+		cat <<- EOF > $fichtemp
+		select uname
+		from information
+		where uname='`uname -n`' and application='centreon' ;
+		EOF
+
+		mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-serveur-local.txt
+
+		lecture_serveur_local=$(sed '$!d' /tmp/lecture-serveur-local.txt)
+
+		if grep -w "^`uname -n`" /tmp/lecture-serveur-local.txt > /dev/null ; then
+			rm -f /tmp/lecture-serveur-local.txt
+			rm -f $fichtemp
+			menu_configuration_restauration_centreon
+		else
+			rm -f /tmp/lecture-serveur-local.txt
+			rm -f $fichtemp
+			message_erreur
+		fi
+
 	fi
-	
+
 	;;
 
  1)	# Appuyé sur Touche CTRL C
