@@ -187,14 +187,14 @@ from sauvegarde_bases
 where uname='$choix_serveur' and application='centreon' ;
 EOF
 
-mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-bases.txt
+mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-bases-distant.txt
 
-sed -i '1d' /tmp/lecture-bases.txt
+sed -i '1d' /tmp/lecture-bases-distant.txt
 
-lecture_bases_no1=$(sed -n '1p' /tmp/lecture-bases.txt)
-lecture_bases_no2=$(sed -n '2p' /tmp/lecture-bases.txt)
-lecture_bases_no3=$(sed -n '3p' /tmp/lecture-bases.txt)
-rm -f /tmp/lecture-bases.txt
+lecture_bases_no1=$(sed -n '1p' /tmp/lecture-bases-distant.txt)
+lecture_bases_no2=$(sed -n '2p' /tmp/lecture-bases-distant.txt)
+lecture_bases_no3=$(sed -n '3p' /tmp/lecture-bases-distant.txt)
+rm -f /tmp/lecture-bases-distant.txt
 rm -f $fichtemp
 
 
@@ -631,6 +631,35 @@ $DIALOG  --backtitle "Configuration Restauration Centreon" \
 	tar xvzf $VARSAISI20 &> /dev/null
 	PLATEFORME_DISTANT=`cat platforme/platforme.txt`
 
+	
+	if [ "$choix_serveur" != `uname -n` ] ; then
+	
+		cat <<- EOF > $fichtemp
+		select base
+		from sauvegarde_bases
+		where uname='`uname -n`' and application='centreon' ;
+		EOF
+
+		mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-bases-local.txt
+
+		sed -i '1d' /tmp/lecture-bases-local.txt
+
+		lecture_bases_no1=$(sed -n '1p' /tmp/lecture-bases-local.txt)
+		lecture_bases_no2=$(sed -n '2p' /tmp/lecture-bases-local.txt)
+		lecture_bases_no3=$(sed -n '3p' /tmp/lecture-bases-local.txt)
+		rm -f /tmp/lecture-bases-local.txt
+		rm -f $fichtemp
+
+		DROP_BASE1=$lecture_bases_no1
+		DROP_BASE2=$lecture_bases_no2
+		DROP_BASE3=$lecture_bases_no3
+
+	else
+		DROP_BASE1=$VARSAISI23
+		DROP_BASE2=$VARSAISI24
+		DROP_BASE3=$VARSAISI25
+	fi
+
 	if [ $PLATEFORME_LOCAL -ne $PLATEFORME_DISTANT ] ; then
 		rm -rf etc/
 		rm -rf usr/
@@ -640,7 +669,6 @@ $DIALOG  --backtitle "Configuration Restauration Centreon" \
 		message_erreur_platforme
 		menu
 	fi
-
 
 	if [ -f /etc/centreon/instCentWeb.conf ] ; then
 		grep "^MONITORINGENGINE_ETC=" /etc/centreon/instCentWeb.conf  > $fichtemp
@@ -730,7 +758,7 @@ $DIALOG  --backtitle "Configuration Restauration Centreon" \
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
 
 	cat <<- EOF > $fichtemp
-	DROP DATABASE $VARSAISI23;
+	DROP DATABASE $DROP_BASE1;
 	EOF
 
 	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
@@ -742,7 +770,7 @@ $DIALOG  --backtitle "Configuration Restauration Centreon" \
 
 
 	cat <<- EOF > $fichtemp
-	DROP DATABASE $VARSAISI24;
+	DROP DATABASE $DROP_BASE2;
 	EOF
 
 	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
@@ -754,7 +782,7 @@ $DIALOG  --backtitle "Configuration Restauration Centreon" \
 
 
 	cat <<- EOF > $fichtemp
-	DROP DATABASE $VARSAISI25;
+	DROP DATABASE $DROP_BASE3;
 	EOF
 
 	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
