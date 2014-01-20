@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 19-01-2014
+# Date : 20-01-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -384,7 +384,7 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 $DIALOG  --backtitle "Configuration Restauration Centreon" \
 	  --insecure \
 	  --title "Gestion Centraliser des Sauvegardes" \
-	  --mixedform "Quel est votre choix" 11 60 0 \
+	  --mixedform "Quel est votre choix" 12 60 0 \
 	  "Nom Serveur:"     1 1  "$REF10"  1 20  30 28 0  \
 	  "Port Serveur:"    2 1  "$REF11"  2 20  30 28 0  \
 	  "Base de Donnees:" 3 1  "$REF12"  3 20  30 28 0  \
