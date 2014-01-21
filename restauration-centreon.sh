@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 20-01-2014
+# Date : 21-01-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -159,7 +159,7 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 cat <<- EOF > $fichtemp
 select user
 from sauvegarde_bases
-where uname='$choix_serveur' and application='centreon' ;
+where uname='`uname -n`' and application='centreon' ;
 EOF
 
 mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-user.txt
@@ -171,7 +171,7 @@ rm -f $fichtemp
 cat <<- EOF > $fichtemp
 select password
 from sauvegarde_bases
-where uname='$choix_serveur' and application='centreon' ;
+where uname='`uname -n`' and application='centreon' ;
 EOF
 
 mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-password.txt
@@ -187,14 +187,14 @@ from sauvegarde_bases
 where uname='$choix_serveur' and application='centreon' ;
 EOF
 
-mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-bases-distant.txt
+mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-bases-sauvegarder.txt
 
-sed -i '1d' /tmp/lecture-bases-distant.txt
+sed -i '1d' /tmp/lecture-bases-sauvegarder.txt
 
-lecture_bases_no1=$(sed -n '1p' /tmp/lecture-bases-distant.txt)
-lecture_bases_no2=$(sed -n '2p' /tmp/lecture-bases-distant.txt)
-lecture_bases_no3=$(sed -n '3p' /tmp/lecture-bases-distant.txt)
-rm -f /tmp/lecture-bases-distant.txt
+lecture_bases_no1=$(sed -n '1p' /tmp/lecture-bases-sauvegarder.txt)
+lecture_bases_no2=$(sed -n '2p' /tmp/lecture-bases-sauvegarder.txt)
+lecture_bases_no3=$(sed -n '3p' /tmp/lecture-bases-sauvegarder.txt)
+rm -f /tmp/lecture-bases-sauvegarder.txt
 rm -f $fichtemp
 
 
@@ -216,6 +216,29 @@ message_erreur()
 cat <<- EOF > /tmp/erreur
 Veuillez vous assurer que les parametres saisie
                 sont correcte
+EOF
+
+erreur=`cat /tmp/erreur`
+
+$DIALOG --ok-label "Quitter" \
+	 --colors \
+	 --backtitle "Parametrage Serveur Centreon" \
+	 --title "Erreur" \
+	 --msgbox  "\Z1$erreur\Zn" 6 52 
+
+rm -f /tmp/erreur
+
+}
+
+#############################################################################
+# Fonction Message d'erreur sauvegarde
+#############################################################################
+
+message_erreur_sauvegarde()
+{
+	
+cat <<- EOF > /tmp/erreur
+Veuillez vous assurer que la sauvegarde soit correcte 
 EOF
 
 erreur=`cat /tmp/erreur`
@@ -503,7 +526,7 @@ case $valret in
 		else
 			rm -f /tmp/lecture-serveur-distant.txt
 			rm -f /tmp/lecture-serveur-local.txt
-			message_erreur
+			message_erreur_sauvegarde
 		fi	
 
 	else
@@ -525,7 +548,7 @@ case $valret in
 		else
 			rm -f /tmp/lecture-serveur-local.txt
 			rm -f $fichtemp
-			message_erreur
+			message_erreur_sauvegarde
 		fi
 
 	fi
@@ -758,38 +781,90 @@ $DIALOG  --backtitle "Configuration Restauration Centreon" \
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
 
 	cat <<- EOF > $fichtemp
-	DROP DATABASE $DROP_BASE1;
+	DROP DATABASE IF EXISTS $DROP_BASE1;
 	EOF
 
 	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+
+	rm -f $fichtemp
+
+	cat <<- EOF > $fichtemp
+	REVOKE ALL PRIVILEGES ON $DROP_BASE1 . * FROM  'centreon'@'localhost';
+	REVOKE GRANT OPTION ON $DROP_BASE1 . * FROM  'centreon'@'localhost';
+	EOF
+
+	#mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
 
 	rm -f $fichtemp
 
 	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < /root/dump/$VARSAISI23.sql
 
-
-
 	cat <<- EOF > $fichtemp
-	DROP DATABASE $DROP_BASE2;
+	GRANT ALL PRIVILEGES ON $VARSAISI23 . * TO  'centreon'@'localhost' WITH GRANT OPTION ;
 	EOF
 
 	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+
+	rm -f $fichtemp
+
+
+
+	cat <<- EOF > $fichtemp
+	DROP DATABASE IF EXISTS $DROP_BASE2;
+	EOF
+
+	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+
+	rm -f $fichtemp
+
+	cat <<- EOF > $fichtemp
+	REVOKE ALL PRIVILEGES ON $DROP_BASE2 . * FROM  'centreon'@'localhost';
+	REVOKE GRANT OPTION ON $DROP_BASE2 . * FROM  'centreon'@'localhost';
+	EOF
+
+	#mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
 
 	rm -f $fichtemp
 
 	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < /root/dump/$VARSAISI24.sql
 
-
-
 	cat <<- EOF > $fichtemp
-	DROP DATABASE $DROP_BASE3;
+	GRANT ALL PRIVILEGES ON $VARSAISI24 . * TO  'centreon'@'localhost' WITH GRANT OPTION ;
 	EOF
 
 	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
 
 	rm -f $fichtemp
 
+
+
+	cat <<- EOF > $fichtemp
+	DROP DATABASE IF EXISTS $DROP_BASE3;
+	EOF
+
+	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+
+	rm -f $fichtemp
+
+	cat <<- EOF > $fichtemp
+	REVOKE ALL PRIVILEGES ON $DROP_BASE3 . * FROM  'centreon'@'localhost';
+	REVOKE GRANT OPTION ON $DROP_BASE3 . * FROM  'centreon'@'localhost';
+	EOF
+
+	#mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+
+	rm -f $fichtemp
+
 	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < /root/dump/$VARSAISI25.sql
+
+	cat <<- EOF > $fichtemp
+	GRANT ALL PRIVILEGES ON $VARSAISI25 . * TO  'centreon'@'localhost' WITH GRANT OPTION ;
+	EOF
+
+	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+
+	rm -f $fichtemp
+
 
  echo "80" ; sleep 1
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
