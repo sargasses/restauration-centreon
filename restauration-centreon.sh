@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 27-01-2014
+# Date : 30-01-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -771,7 +771,7 @@ $DIALOG  --backtitle "Configuration Restauration Centreon" \
 		rm -rf etc/
 		rm -rf usr/
 		rm -rf var/
-		rm -rf dump/
+		rm -rf dump-mysql/
 		rm -rf platforme/
 		message_erreur_centreon
 		menu
@@ -782,7 +782,7 @@ $DIALOG  --backtitle "Configuration Restauration Centreon" \
 		rm -rf etc/
 		rm -rf usr/
 		rm -rf var/
-		rm -rf dump/
+		rm -rf dump-mysql/
 		rm -rf platforme/
 		message_erreur_platforme
 		menu
@@ -806,7 +806,7 @@ $DIALOG  --backtitle "Configuration Restauration Centreon" \
 		rm -rf etc/
 		rm -rf usr/
 		rm -rf var/
-		rm -rf dump/
+		rm -rf dump-mysql/
 		rm -rf platforme/
 		message_erreur_engine
 		menu
@@ -876,11 +876,11 @@ $DIALOG  --backtitle "Configuration Restauration Centreon" \
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
 
 
-	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < /root/dump/$VARSAISI23.sql
+	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < /root/dump-mysql/$VARSAISI23.sql
 	
-	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < /root/dump/$VARSAISI24.sql
+	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < /root/dump-mysql/$VARSAISI24.sql
 
-	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < /root/dump/$VARSAISI25.sql
+	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < /root/dump-mysql/$VARSAISI25.sql
 
 
 	cat <<- EOF > $fichtemp
@@ -916,7 +916,7 @@ $DIALOG  --backtitle "Configuration Restauration Centreon" \
 	rm -rf etc/
 	rm -rf usr/
 	rm -rf var/
-	rm -rf dump/
+	rm -rf dump-mysql/
 	rm -rf platforme/
 
 
