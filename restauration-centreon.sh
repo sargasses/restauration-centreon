@@ -222,7 +222,7 @@ erreur=`cat /tmp/erreur`
 
 $DIALOG --ok-label "Quitter" \
 	 --colors \
-	 --backtitle "Parametrage Serveur Centreon" \
+	 --backtitle "Configuration Restauration Centreon" \
 	 --title "Erreur" \
 	 --msgbox  "\Z1$erreur\Zn" 6 52 
 
@@ -246,7 +246,7 @@ erreur=`cat /tmp/erreur`
 
 $DIALOG --ok-label "Quitter" \
 	 --colors \
-	 --backtitle "Parametrage Serveur Centreon" \
+	 --backtitle "Configuration Restauration Centreon" \
 	 --title "Erreur" \
 	 --msgbox  "\Z1$erreur\Zn" 6 44 
 
@@ -270,7 +270,7 @@ erreur=`cat /tmp/erreur`
 
 $DIALOG --ok-label "Quitter" \
 	 --colors \
-	 --backtitle "Parametrage Serveur Centreon" \
+	 --backtitle "Configuration Restauration Centreon" \
 	 --title "Erreur" \
 	 --msgbox  "\Z1$erreur\Zn" 6 38 
 
@@ -294,7 +294,7 @@ erreur=`cat /tmp/erreur`
 
 $DIALOG --ok-label "Quitter" \
 	 --colors \
-	 --backtitle "Parametrage Serveur Centreon" \
+	 --backtitle "Configuration Restauration Centreon" \
 	 --title "Erreur" \
 	 --msgbox  "\Z1$erreur\Zn" 6 52 
 
