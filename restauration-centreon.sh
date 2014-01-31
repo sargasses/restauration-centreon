@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 30-01-2014
+# Date : 31-01-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -318,7 +318,7 @@ erreur=`cat /tmp/erreur`
 
 $DIALOG --ok-label "Quitter" \
 	 --colors \
-	 --backtitle "Parametrage Serveur Centreon" \
+	 --backtitle "Configuration Restauration Centreon" \
 	 --title "Erreur" \
 	 --msgbox  "\Z1$erreur\Zn" 6 52 
 
