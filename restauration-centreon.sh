@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 31-01-2014
+# Date : 03-02-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -239,7 +239,7 @@ message_erreur_sauvegarde()
 	
 cat <<- EOF > /tmp/erreur
 Veuillez vous assurer que la sauvegarde 
-             soit correcte 
+            soit correcte 
 EOF
 
 erreur=`cat /tmp/erreur`
@@ -255,6 +255,30 @@ rm -f /tmp/erreur
 }
 
 #############################################################################
+# Fonction Message d'erreur fichier
+#############################################################################
+
+message_erreur_fichier()
+{
+	
+cat <<- EOF > /tmp/erreur
+Veuillez vous assurer que le fichier *.tgz 
+             soit bien present 
+EOF
+
+erreur=`cat /tmp/erreur`
+
+$DIALOG --ok-label "Quitter" \
+	 --colors \
+	 --backtitle "Configuration Restauration Centreon" \
+	 --title "Erreur" \
+	 --msgbox  "\Z1$erreur\Zn" 6 46 
+
+rm -f /tmp/erreur
+
+}
+
+#############################################################################
 # Fonction Message d'erreur centreon
 #############################################################################
 
@@ -263,7 +287,7 @@ message_erreur_centreon()
 	
 cat <<- EOF > /tmp/erreur
 Veuillez vous assurer que centreon
-           est installer
+        est bien installer
 EOF
 
 erreur=`cat /tmp/erreur`
@@ -357,15 +381,15 @@ verification_couleur
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
 
-$DIALOG  --backtitle "Configuration Restauration Centreon" \
-	  --title "Configuration Restauration Centreon" \
-	  --clear \
-	  --colors \
-	  --default-item "3" \
-	  --menu "Quel est votre choix" 12 60 4 \
-	  "1" "$choix1" \
-	  "2" "Configuration Restauration Centreon" \
-	  "3" "Quitter" 2> $fichtemp
+$DIALOG --backtitle "Configuration Restauration Centreon" \
+	--title "Configuration Restauration Centreon" \
+	--clear \
+	--colors \
+	--default-item "3" \
+	--menu "Quel est votre choix" 12 60 4 \
+	"1" "$choix1" \
+	"2" "Configuration Restauration Centreon" \
+	"3" "Quitter" 2> $fichtemp
 
 
 valret=$?
@@ -376,7 +400,7 @@ case $valret in
 	if [ "$choix" = "1" ]
 	then
 		rm -f $fichtemp
-              menu_gestion_centraliser_sauvegardes
+		menu_gestion_centraliser_sauvegardes
 	fi
 
 	# Configuration Restauration Centreon
@@ -429,15 +453,15 @@ lecture_config_centraliser_sauvegarde
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
 
-$DIALOG  --backtitle "Configuration Restauration Centreon" \
-	  --insecure \
-	  --title "Gestion Centraliser des Sauvegardes" \
-	  --mixedform "Quel est votre choix" 12 60 0 \
-	  "Nom Serveur:"     1 1  "$REF10"  1 20  30 28 0  \
-	  "Port Serveur:"    2 1  "$REF11"  2 20  30 28 0  \
-	  "Base de Donnees:" 3 1  "$REF12"  3 20  30 28 0  \
-	  "Compte Root:"     4 1  "$REF13"  4 20  30 28 0  \
-	  "Password Root:"   5 1  "$REF14"  5 20  30 28 1  2> $fichtemp
+$DIALOG --backtitle "Configuration Restauration Centreon" \
+	--insecure \
+	--title "Gestion Centraliser des Sauvegardes" \
+	--mixedform "Quel est votre choix" 12 60 0 \
+	"Nom Serveur:"     1 1  "$REF10"  1 20  30 28 0  \
+	"Port Serveur:"    2 1  "$REF11"  2 20  30 28 0  \
+	"Base de Donnees:" 3 1  "$REF12"  3 20  30 28 0  \
+	"Compte Root:"     4 1  "$REF13"  4 20  30 28 0  \
+	"Password Root:"   5 1  "$REF14"  5 20  30 28 1  2> $fichtemp
 
 
 valret=$?
@@ -503,10 +527,10 @@ menu_choix_serveur()
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
 
-$DIALOG  --backtitle "Configuration Restauration Centreon" \
-	  --title "Configuration Restauration Centreon" \
-	  --form "Quel est votre choix" 8 50 1 \
-	  "Restauration Serveur:"  1 1  "`uname -n`"   1 23 20 0  2> $fichtemp
+$DIALOG --backtitle "Configuration Restauration Centreon" \
+	--title "Configuration Restauration Centreon" \
+	--form "Quel est votre choix" 8 50 1 \
+	"Restauration Serveur:"  1 1  "`uname -n`" 1 23 20 0  2> $fichtemp
 
 
 valret=$?
@@ -547,7 +571,7 @@ case $valret in
 
 			rm -f /tmp/lecture-serveur-distant.txt
 			rm -f /tmp/lecture-serveur-local.txt
-			menu_configuration_restauration_centreon
+			menu_choix_fichier
 		else
 			rm -f /tmp/lecture-serveur-distant.txt
 			rm -f /tmp/lecture-serveur-local.txt
@@ -569,7 +593,7 @@ case $valret in
 		if grep -w "^`uname -n`" /tmp/lecture-serveur-local.txt > /dev/null ; then
 			rm -f /tmp/lecture-serveur-local.txt
 			rm -f $fichtemp
-			menu_configuration_restauration_centreon
+			menu_choix_fichier
 		else
 			rm -f /tmp/lecture-serveur-local.txt
 			rm -f $fichtemp
@@ -597,6 +621,57 @@ menu
 }
 
 #############################################################################
+# Fonction Menu Choix Du fichier
+#############################################################################
+
+menu_choix_fichier()
+{
+
+fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
+
+
+$DIALOG --backtitle "Configuration Restauration Centreon" \
+	--title "Configuration Restauration Centreon" \
+	--form "Quel est votre choix" 8 60 1 \
+	"Fichier de Sauvegarde:"  1 1  "centreon-$DATE_HEURE.tgz" 1 24 30 28  2> $fichtemp
+
+
+valret=$?
+choix_fichier=`cat $fichtemp`
+case $valret in
+
+ 0)	# Choix Du fichier de Sauvegarde
+
+	if [ -f $choix_fichier ] ; then
+		rm -f $fichtemp
+		#restauration_centreon
+	else
+		rm -f $fichtemp
+		message_erreur_fichier
+		menu
+	fi
+
+
+	;;
+
+ 1)	# Appuyé sur Touche CTRL C
+	echo "Appuyé sur Touche CTRL C."
+	;;
+
+ 255)	# Appuyé sur Touche Echap
+	echo "Appuyé sur Touche Echap."
+	;;
+
+esac
+
+rm -f $fichtemp
+
+menu
+
+}
+
+
+#############################################################################
 # Fonction Menu Configuration Restauration Centreon
 #############################################################################
 
@@ -608,15 +683,16 @@ lecture_valeurs_base_donnees
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
 
-$DIALOG  --backtitle "Configuration Restauration Centreon" \
-	  --insecure \
-	  --title "Configuration Restauration Centreon" \
-	  --mixedform "Quel est votre choix" 12 62 0 \
+$DIALOG --backtitle "Configuration Restauration Centreon" \
+	--colors \
+	--insecure \
+	--title "Configuration Restauration Centreon" \
+	--mixedform "Quel est votre choix" 12 62 0 \
 	  "Fichier de Sauvegarde:"   1 1  "centreon-$DATE_HEURE.tgz" 1 25  28 28 0  \
 	  "Utilisateur de la Base:"  2 1  "$REF20"                   2 25  28 28 0  \
 	  "Password de la Base:"     3 1  "$REF21"                   3 25  28 28 1  \
 	  "Nom de la Base:"          4 1  "$REF22"                   4 25  28 28 0  \
-	  "Nom de la Base:"          5 1  "$REF23"                   5 25  28 28 0  \
+	  "Nom de la Base:"          5 1  "$REF23"                   5 25  28 28 2  \
 	  "Nom de la Base:"          6 1  "$REF24"                   6 25  28 28 0  2> $fichtemp
 
 
