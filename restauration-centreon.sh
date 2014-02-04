@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 03-02-2014
+# Date : 04-02-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -382,14 +382,14 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
 
 $DIALOG --backtitle "Configuration Restauration Centreon" \
-	--title "Configuration Restauration Centreon" \
-	--clear \
-	--colors \
-	--default-item "3" \
-	--menu "Quel est votre choix" 12 60 4 \
-	"1" "$choix1" \
-	"2" "Configuration Restauration Centreon" \
-	"3" "Quitter" 2> $fichtemp
+	 --title "Configuration Restauration Centreon" \
+	 --clear \
+	 --colors \
+	 --default-item "3" \
+	 --menu "Quel est votre choix" 12 60 4 \
+	 "1" "$choix1" \
+	 "2" "Configuration Restauration Centreon" \
+	 "3" "Quitter" 2> $fichtemp
 
 
 valret=$?
@@ -454,14 +454,14 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
 
 $DIALOG --backtitle "Configuration Restauration Centreon" \
-	--insecure \
-	--title "Gestion Centraliser des Sauvegardes" \
-	--mixedform "Quel est votre choix" 12 60 0 \
-	"Nom Serveur:"     1 1  "$REF10"  1 20  30 28 0  \
-	"Port Serveur:"    2 1  "$REF11"  2 20  30 28 0  \
-	"Base de Donnees:" 3 1  "$REF12"  3 20  30 28 0  \
-	"Compte Root:"     4 1  "$REF13"  4 20  30 28 0  \
-	"Password Root:"   5 1  "$REF14"  5 20  30 28 1  2> $fichtemp
+	 --insecure \
+	 --title "Gestion Centraliser des Sauvegardes" \
+	 --mixedform "Quel est votre choix" 12 60 0 \
+	 "Nom Serveur:"     1 1  "$REF10"  1 20  30 28 0  \
+	 "Port Serveur:"    2 1  "$REF11"  2 20  30 28 0  \
+	 "Base de Donnees:" 3 1  "$REF12"  3 20  30 28 0  \
+	 "Compte Root:"     4 1  "$REF13"  4 20  30 28 0  \
+	 "Password Root:"   5 1  "$REF14"  5 20  30 28 1  2> $fichtemp
 
 
 valret=$?
@@ -528,9 +528,9 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
 
 $DIALOG --backtitle "Configuration Restauration Centreon" \
-	--title "Configuration Restauration Centreon" \
-	--form "Quel est votre choix" 8 50 1 \
-	"Restauration Serveur:"  1 1  "`uname -n`" 1 23 20 0  2> $fichtemp
+	 --title "Configuration Restauration Centreon" \
+	 --form "Quel est votre choix" 8 50 1 \
+	 "Restauration Serveur:"  1 1  "`uname -n`" 1 23 20 0  2> $fichtemp
 
 
 valret=$?
@@ -631,9 +631,9 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
 
 $DIALOG --backtitle "Configuration Restauration Centreon" \
-	--title "Configuration Restauration Centreon" \
-	--form "Quel est votre choix" 8 60 1 \
-	"Fichier de Sauvegarde:"  1 1  "centreon-$DATE_HEURE.tgz" 1 24 30 28  2> $fichtemp
+	 --title "Configuration Restauration Centreon" \
+	 --form "Quel est votre choix" 8 60 1 \
+	 "Fichier de Sauvegarde:"  1 1  "centreon-$DATE_HEURE.tgz" 1 24 30 28  2> $fichtemp
 
 
 valret=$?
@@ -684,16 +684,16 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
 
 $DIALOG --backtitle "Configuration Restauration Centreon" \
-	--colors \
-	--insecure \
-	--title "Configuration Restauration Centreon" \
-	--mixedform "Quel est votre choix" 12 62 0 \
-	  "Fichier de Sauvegarde:"   1 1  "centreon-$DATE_HEURE.tgz" 1 25  28 28 0  \
-	  "Utilisateur de la Base:"  2 1  "$REF20"                   2 25  28 28 0  \
-	  "Password de la Base:"     3 1  "$REF21"                   3 25  28 28 1  \
-	  "Nom de la Base:"          4 1  "$REF22"                   4 25  28 28 0  \
-	  "Nom de la Base:"          5 1  "$REF23"                   5 25  28 28 2  \
-	  "Nom de la Base:"          6 1  "$REF24"                   6 25  28 28 0  2> $fichtemp
+	 --colors \
+	 --insecure \
+	 --title "Configuration Restauration Centreon" \
+	 --mixedform "Quel est votre choix" 12 62 0 \
+	 "Fichier de Sauvegarde:"   1 1  "centreon-$DATE_HEURE.tgz" 1 25  28 28 0  \
+	 "Utilisateur de la Base:"  2 1  "$REF20"                   2 25  28 28 0  \
+	 "Password de la Base:"     3 1  "$REF21"                   3 25  28 28 1  \
+	 "Nom de la Base:"          4 1  "$REF22"                   4 25  28 28 0  \
+	 "Nom de la Base:"          5 1  "$REF23"                   5 25  28 28 2  \
+	 "Nom de la Base:"          6 1  "$REF24"                   6 25  28 28 0  2> $fichtemp
 
 
 valret=$?
@@ -748,9 +748,9 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 (
  echo "10" ; sleep 1
 ) |
-$DIALOG  --backtitle "Configuration Restauration Centreon" \
-	  --title "Configuration Restauration Centreon" \
-	  --gauge "Restauration en cours veuillez patienter" 10 62 0 \
+$DIALOG --backtitle "Configuration Restauration Centreon" \
+	 --title "Configuration Restauration Centreon" \
+	 --gauge "Restauration en cours veuillez patienter" 10 62 0 \
 
 	tar xvzf $VARSAISI20 &> /dev/null
 	PLATEFORME_DISTANT=`cat platforme/platforme.txt`
@@ -1025,9 +1025,9 @@ $DIALOG  --backtitle "Configuration Restauration Centreon" \
  echo "XXX" ; echo "Terminer"; echo "XXX"
  sleep 2
 ) |
-$DIALOG  --backtitle "Configuration Restauration Centreon" \
-	  --title "Configuration Restauration Centreon" \
-	  --gauge "Restauration en cours veuillez patienter" 10 62 0 \
+$DIALOG --backtitle "Configuration Restauration Centreon" \
+	 --title "Configuration Restauration Centreon" \
+	 --gauge "Restauration en cours veuillez patienter" 10 62 0 \
 
 }
 
