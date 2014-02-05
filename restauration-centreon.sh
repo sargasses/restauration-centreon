@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 04-02-2014
+# Date : 05-02-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -644,7 +644,7 @@ case $valret in
 
 	if [ -f $choix_fichier ] ; then
 		rm -f $fichtemp
-		#restauration_centreon
+		menu_confirmation_restauration_centreon
 	else
 		rm -f $fichtemp
 		message_erreur_fichier
@@ -670,62 +670,61 @@ menu
 
 }
 
-
 #############################################################################
-# Fonction Menu Configuration Restauration Centreon
+# Fonction Menu Confirmation Restauration Centreon
 #############################################################################
 
-menu_configuration_restauration_centreon()
+menu_confirmation_restauration_centreon()
 {
 
 lecture_valeurs_base_donnees
 
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
+cat <<- EOF > $fichtemp
+Fichier de Sauvegarde:	\Z2$choix_fichier\Zn
+Utilisateur de la Base:	\Z2$REF20\Zn
+Nom de la Base:		\Z2$REF22\Zn
+Nom de la Base:		\Z2$REF23\Zn
+Nom de la Base:		\Z2$REF24\Zn
+EOF
+
+recapitulatif=`cat $fichtemp`
+
 
 $DIALOG --backtitle "Configuration Restauration Centreon" \
 	 --colors \
-	 --insecure \
-	 --title "Configuration Restauration Centreon" \
-	 --mixedform "Quel est votre choix" 12 62 0 \
-	 "Fichier de Sauvegarde:"   1 1  "centreon-$DATE_HEURE.tgz" 1 25  28 28 0  \
-	 "Utilisateur de la Base:"  2 1  "$REF20"                   2 25  28 28 0  \
-	 "Password de la Base:"     3 1  "$REF21"                   3 25  28 28 1  \
-	 "Nom de la Base:"          4 1  "$REF22"                   4 25  28 28 0  \
-	 "Nom de la Base:"          5 1  "$REF23"                   5 25  28 28 2  \
-	 "Nom de la Base:"          6 1  "$REF24"                   6 25  28 28 0  2> $fichtemp
+	 --title " Confirmation Restauration Centreon" \
+	 --yesno "$recapitulatif" 10 60 2> $fichtemp
 
 
 valret=$?
 choix=`cat $fichtemp`
 case $valret in
 
- 0)	# Configuration Restauration Centreon
-	VARSAISI20=$(sed -n 1p $fichtemp)
-	VARSAISI21=$(sed -n 2p $fichtemp)
-	VARSAISI22=$(sed -n 3p $fichtemp)
-	VARSAISI23=$(sed -n 4p $fichtemp)
-	VARSAISI24=$(sed -n 5p $fichtemp)
-	VARSAISI25=$(sed -n 6p $fichtemp)
+ 0)	# Confimation Recapitulatif Restauration Centreon (Oui)
+	VARSAISI20=$choix_fichier
+	VARSAISI21=$REF20
+	VARSAISI22=$REF21
+	VARSAISI23=$REF22
+	VARSAISI24=$REF23
+	VARSAISI25=$REF24
 
-	if [ -f $VARSAISI20 ] ; then
-		rm -f $fichtemp
-		restauration_centreon
-	else
-		rm -f $fichtemp
-		message_erreur
-		menu
-	fi
-
+	tar xvzf $VARSAISI20 &> /dev/null
+	rm -f $fichtemp
+	fonction_verification_plateforme
 	;;
 
- 1)	# Appuyé sur Touche CTRL C
-	echo "Appuyé sur Touche CTRL C."
+
+ 1)	# Confimation Restauration Centreon (Non)
+	echo "Appuyé sur Touche (Non)"
 	;;
 
  255)	# Appuyé sur Touche Echap
 	echo "Appuyé sur Touche Echap."
 	;;
+
+
 
 esac
 
@@ -736,10 +735,68 @@ menu
 }
 
 #############################################################################
+# Fonction Verification Plateforme
+#############################################################################
+
+fonction_verification_plateforme()
+{
+
+PLATEFORME_DISTANT=`cat platforme/platforme.txt`
+
+if [ $PLATEFORME_LOCAL -ne $PLATEFORME_DISTANT ] ; then
+	rm -rf etc/
+	rm -rf usr/
+	rm -rf var/
+	rm -rf dump-mysql/
+	rm -rf platforme/
+	message_erreur_platforme
+	menu
+else
+	fonction_verification_engine
+fi
+
+}
+
+#############################################################################
+# Fonction Verification engine
+#############################################################################
+
+fonction_verification_engine()
+{
+
+if [ -f /etc/centreon/instCentWeb.conf ] ; then
+	grep "^MONITORINGENGINE_ETC=" /etc/centreon/instCentWeb.conf  > $fichtemp
+	sed -i "s/MONITORINGENGINE_ETC=//g" $fichtemp
+	ENGINE_LOCAL=`cat $fichtemp` 
+	rm -f $fichtemp
+fi
+
+if [ -f etc/centreon/instCentWeb.conf ] ; then
+	grep "^MONITORINGENGINE_ETC=" etc/centreon/instCentWeb.conf  > $fichtemp
+	sed -i "s/MONITORINGENGINE_ETC=//g" $fichtemp
+	ENGINE_DISTANT=`cat $fichtemp` 
+	rm -f $fichtemp
+fi
+
+if [ "$ENGINE_LOCAL" != "$ENGINE_DISTANT" ] ; then
+	rm -rf etc/
+	rm -rf usr/
+	rm -rf var/
+	rm -rf dump-mysql/
+	rm -rf platforme/
+	message_erreur_engine
+	menu
+else
+echo "restauration en cour"
+fi
+
+}
+
+#############################################################################
 # Fonction Restauration Centreon
 #############################################################################
 
-restauration_centreon()
+fonction_restauration_centreon()
 {
 
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
@@ -752,8 +809,8 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 	 --title "Configuration Restauration Centreon" \
 	 --gauge "Restauration en cours veuillez patienter" 10 62 0 \
 
-	tar xvzf $VARSAISI20 &> /dev/null
-	PLATEFORME_DISTANT=`cat platforme/platforme.txt`
+	
+
 
 	
 	if [ -f /etc/centreon/centreon.conf.php ] ; then
@@ -854,39 +911,6 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 		fi
 	fi
 
-	if [ $PLATEFORME_LOCAL -ne $PLATEFORME_DISTANT ] ; then
-		rm -rf etc/
-		rm -rf usr/
-		rm -rf var/
-		rm -rf dump-mysql/
-		rm -rf platforme/
-		message_erreur_platforme
-		menu
-	fi
-
-	if [ -f /etc/centreon/instCentWeb.conf ] ; then
-		grep "^MONITORINGENGINE_ETC=" /etc/centreon/instCentWeb.conf  > $fichtemp
-		sed -i "s/MONITORINGENGINE_ETC=//g" $fichtemp
-		ENGINE_LOCAL=`cat $fichtemp` 
-		rm -f $fichtemp
-	fi
-
-	if [ -f etc/centreon/instCentWeb.conf ] ; then
-		grep "^MONITORINGENGINE_ETC=" etc/centreon/instCentWeb.conf  > $fichtemp
-		sed -i "s/MONITORINGENGINE_ETC=//g" $fichtemp
-		ENGINE_DISTANT=`cat $fichtemp` 
-		rm -f $fichtemp
-	fi
-
-	if [ "$ENGINE_LOCAL" != "$ENGINE_DISTANT" ] ; then
-		rm -rf etc/
-		rm -rf usr/
-		rm -rf var/
-		rm -rf dump-mysql/
-		rm -rf platforme/
-		message_erreur_engine
-		menu
-	fi
 
 (
  echo "20" ; sleep 1
