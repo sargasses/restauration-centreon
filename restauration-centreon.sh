@@ -529,8 +529,8 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
 $DIALOG --backtitle "Configuration Restauration Centreon" \
 	 --title "Configuration Restauration Centreon" \
-	 --form "Quel est votre choix" 8 50 1 \
-	 "Restauration Serveur:"  1 1  "`uname -n`" 1 23 20 0  2> $fichtemp
+	 --form "Quel est votre choix" 9 60 1 \
+	 "Restauration Serveur:"  1 1  "`uname -n`" 1 23 31 18 2> $fichtemp
 
 
 valret=$?
@@ -632,7 +632,7 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
 $DIALOG --backtitle "Configuration Restauration Centreon" \
 	 --title "Configuration Restauration Centreon" \
-	 --form "Quel est votre choix" 8 60 1 \
+	 --form "Quel est votre choix" 9 60 1 \
 	 "Fichier de Sauvegarde:"  1 1  "centreon-$DATE_HEURE.tgz" 1 24 30 28  2> $fichtemp
 
 
@@ -681,21 +681,17 @@ lecture_valeurs_base_donnees
 
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
-cat <<- EOF > $fichtemp
-Fichier de Sauvegarde:	\Z5$choix_fichier\Zn
-Utilisateur de la Base:	\Z5$REF20\Zn
-Nom de la Base:		\Z5$REF22\Zn
-Nom de la Base:		\Z5$REF23\Zn
-Nom de la Base:		\Z5$REF24\Zn
-EOF
-
-recapitulatif=`cat $fichtemp`
-
 
 $DIALOG --backtitle "Configuration Restauration Centreon" \
 	 --colors \
-	 --title " Confirmation Restauration Centreon" \
-	 --yesno "$recapitulatif" 10 60 2> $fichtemp
+	 --title "Confirmation Restauration Centreon" \
+	 --menu "Quel est votre choix" 8 60 0 \
+	 "Fichier de Sauvegarde:"    "\Z2centreon-$DATE_HEURE.tgz" \
+	 "Utilisateur de la Base:"   "\Z2$REF20\Zn" \
+	 "Password de la Base:"      "\Z2$REF21\Zn" \
+	 "Nom de la Base:"           "\Z2$REF22\Zn" \
+	 "Nom de la Base:"           "\Z2$REF23\Zn" \
+	 "Nom de la Base:"           "\Z2$REF24\Zn" 2> $fichtemp
 
 
 valret=$?
@@ -724,8 +720,6 @@ case $valret in
 	echo "Appuyé sur Touche Echap."
 	;;
 
-
-
 esac
 
 rm -f $fichtemp
@@ -741,7 +735,7 @@ menu
 fonction_verification_plateforme()
 {
 
-PLATEFORME_DISTANT=`cat platforme/platforme.txt`
+PLATEFORME_DISTANT=`cat platforme/platforme.txt` 
 
 if [ $PLATEFORME_LOCAL -ne $PLATEFORME_DISTANT ] ; then
 	rm -rf etc/
@@ -825,8 +819,6 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 	 --title "Configuration Restauration Centreon" \
 	 --gauge "Restauration en cours veuillez patienter" 10 62 0 \
 
-
-	
 	grep "user" /etc/centreon/centreon.conf.php > $fichtemp
 	sed -n 's/.* =\ \(.*\);.*/\1/ip' $fichtemp > /tmp/utilisateur-centreon.txt 
 	sed -i 's/\"//g' /tmp/utilisateur-centreon.txt
