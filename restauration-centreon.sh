@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 05-02-2014
+# Date : 06-02-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -311,7 +311,7 @@ message_erreur_platforme()
 	
 cat <<- EOF > /tmp/erreur
 Veuillez vous assurer que la platforme utiliser
-                 sont correcte
+                 soit correcte
 EOF
 
 erreur=`cat /tmp/erreur`
@@ -621,7 +621,7 @@ menu
 }
 
 #############################################################################
-# Fonction Menu Choix Du fichier
+# Fonction Menu Choix Du Fichier
 #############################################################################
 
 menu_choix_fichier()
@@ -682,11 +682,11 @@ lecture_valeurs_base_donnees
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 
 cat <<- EOF > $fichtemp
-Fichier de Sauvegarde:	\Z2$choix_fichier\Zn
-Utilisateur de la Base:	\Z2$REF20\Zn
-Nom de la Base:		\Z2$REF22\Zn
-Nom de la Base:		\Z2$REF23\Zn
-Nom de la Base:		\Z2$REF24\Zn
+Fichier de Sauvegarde:	\Z5$choix_fichier\Zn
+Utilisateur de la Base:	\Z5$REF20\Zn
+Nom de la Base:		\Z5$REF22\Zn
+Nom de la Base:		\Z5$REF23\Zn
+Nom de la Base:		\Z5$REF24\Zn
 EOF
 
 recapitulatif=`cat $fichtemp`
@@ -758,7 +758,7 @@ fi
 }
 
 #############################################################################
-# Fonction Verification engine
+# Fonction Verification Engine
 #############################################################################
 
 fonction_verification_engine()
@@ -769,6 +769,14 @@ if [ -f /etc/centreon/instCentWeb.conf ] ; then
 	sed -i "s/MONITORINGENGINE_ETC=//g" $fichtemp
 	ENGINE_LOCAL=`cat $fichtemp` 
 	rm -f $fichtemp
+else
+	rm -rf etc/
+	rm -rf usr/
+	rm -rf var/
+	rm -rf dump-mysql/
+	rm -rf platforme/
+	message_erreur_centreon
+	menu
 fi
 
 if [ -f etc/centreon/instCentWeb.conf ] ; then
@@ -776,6 +784,14 @@ if [ -f etc/centreon/instCentWeb.conf ] ; then
 	sed -i "s/MONITORINGENGINE_ETC=//g" $fichtemp
 	ENGINE_DISTANT=`cat $fichtemp` 
 	rm -f $fichtemp
+else
+	rm -rf etc/
+	rm -rf usr/
+	rm -rf var/
+	rm -rf dump-mysql/
+	rm -rf platforme/
+	message_erreur_sauvegarde
+	menu
 fi
 
 if [ "$ENGINE_LOCAL" != "$ENGINE_DISTANT" ] ; then
@@ -787,7 +803,7 @@ if [ "$ENGINE_LOCAL" != "$ENGINE_DISTANT" ] ; then
 	message_erreur_engine
 	menu
 else
-echo "restauration en cour"
+	fonction_restauration_centreon
 fi
 
 }
@@ -809,98 +825,95 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 	 --title "Configuration Restauration Centreon" \
 	 --gauge "Restauration en cours veuillez patienter" 10 62 0 \
 
-	
-
 
 	
-	if [ -f /etc/centreon/centreon.conf.php ] ; then
-		grep "user" /etc/centreon/centreon.conf.php > $fichtemp
-		sed -n 's/.* =\ \(.*\);.*/\1/ip' $fichtemp > /tmp/utilisateur-centreon.txt 
-		sed -i 's/\"//g' /tmp/utilisateur-centreon.txt
-		utilisateur_centreon=`cat /tmp/utilisateur-centreon.txt`
-		rm -f /tmp/utilisateur-centreon.txt
-		rm -f $fichtemp
+	grep "user" /etc/centreon/centreon.conf.php > $fichtemp
+	sed -n 's/.* =\ \(.*\);.*/\1/ip' $fichtemp > /tmp/utilisateur-centreon.txt 
+	sed -i 's/\"//g' /tmp/utilisateur-centreon.txt
+	utilisateur_centreon=`cat /tmp/utilisateur-centreon.txt`
+	rm -f /tmp/utilisateur-centreon.txt
+	rm -f $fichtemp
 		
 
+	cat <<- EOF > $fichtemp
+	use mysql;
+	SELECT Db FROM db WHERE User='$utilisateur_centreon';
+	EOF
+
+	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp > /tmp/lecture-bases-supprimer.txt
+
+
+	sed -i '1d' /tmp/lecture-bases-supprimer.txt
+
+	bases_no1=$(sed -n '1p' /tmp/lecture-bases-supprimer.txt)
+	bases_no2=$(sed -n '2p' /tmp/lecture-bases-supprimer.txt)
+	bases_no3=$(sed -n '3p' /tmp/lecture-bases-supprimer.txt)
+	rm -f /tmp/lecture-bases-supprimer.txt
+	rm -f $fichtemp
+
+
+	if [ "$bases_no1" != "" ] ||
+	   [ "$bases_no2" != "" ] ||
+	   [ "$bases_no3" != "" ] ; then
+
+
 		cat <<- EOF > $fichtemp
-		use mysql;
-		SELECT Db FROM db WHERE User='$utilisateur_centreon';
+		DROP DATABASE IF EXISTS $bases_no1;
 		EOF
 
-		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp > /tmp/lecture-bases-supprimer.txt
+		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
 
-
-		sed -i '1d' /tmp/lecture-bases-supprimer.txt
-
-		bases_no1=$(sed -n '1p' /tmp/lecture-bases-supprimer.txt)
-		bases_no2=$(sed -n '2p' /tmp/lecture-bases-supprimer.txt)
-		bases_no3=$(sed -n '3p' /tmp/lecture-bases-supprimer.txt)
-		rm -f /tmp/lecture-bases-supprimer.txt
 		rm -f $fichtemp
 
 
-		if [ "$bases_no1" != "" ] ||
-		   [ "$bases_no2" != "" ] ||
-		   [ "$bases_no3" != "" ] ; then
+		cat <<- EOF > $fichtemp
+		DROP DATABASE IF EXISTS $bases_no2;
+		EOF
+
+		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+
+		rm -f $fichtemp
 
 
-			cat <<- EOF > $fichtemp
-			DROP DATABASE IF EXISTS $bases_no1;
-			EOF
+		cat <<- EOF > $fichtemp
+		DROP DATABASE IF EXISTS $bases_no3;
+		EOF
 
-			mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
 
-			rm -f $fichtemp
-
-
-			cat <<- EOF > $fichtemp
-			DROP DATABASE IF EXISTS $bases_no2;
-			EOF
-
-			mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
-
-			rm -f $fichtemp
+		rm -f $fichtemp
 
 
-			cat <<- EOF > $fichtemp
-			DROP DATABASE IF EXISTS $bases_no3;
-			EOF
+		cat <<- EOF > $fichtemp
+		REVOKE ALL PRIVILEGES ON $bases_no1 . * FROM '$utilisateur_centreon'@'localhost';
+		REVOKE GRANT OPTION ON $bases_no1 . * FROM '$utilisateur_centreon'@'localhost';
+		EOF
 
-			mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
 
-			rm -f $fichtemp
-
-
-			cat <<- EOF > $fichtemp
-			REVOKE ALL PRIVILEGES ON $bases_no1 . * FROM '$utilisateur_centreon'@'localhost';
-			REVOKE GRANT OPTION ON $bases_no1 . * FROM '$utilisateur_centreon'@'localhost';
-			EOF
-
-			mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
-
-			rm -f $fichtemp
+		rm -f $fichtemp
 
 
-			cat <<- EOF > $fichtemp
-			REVOKE ALL PRIVILEGES ON $bases_no2 . * FROM '$utilisateur_centreon'@'localhost';
-			REVOKE GRANT OPTION ON $bases_no2 . * FROM '$utilisateur_centreon'@'localhost';
-			EOF
+		cat <<- EOF > $fichtemp
+		REVOKE ALL PRIVILEGES ON $bases_no2 . * FROM '$utilisateur_centreon'@'localhost';
+		REVOKE GRANT OPTION ON $bases_no2 . * FROM '$utilisateur_centreon'@'localhost';
+		EOF
 
-			mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
 
-			rm -f $fichtemp
+		rm -f $fichtemp
 
 
-			cat <<- EOF > $fichtemp
-			REVOKE ALL PRIVILEGES ON $bases_no3 . * FROM '$utilisateur_centreon'@'localhost';
-			REVOKE GRANT OPTION ON $bases_no3 . * FROM '$utilisateur_centreon'@'localhost';
-			EOF
+		cat <<- EOF > $fichtemp
+		REVOKE ALL PRIVILEGES ON $bases_no3 . * FROM '$utilisateur_centreon'@'localhost';
+		REVOKE GRANT OPTION ON $bases_no3 . * FROM '$utilisateur_centreon'@'localhost';
+		EOF
 
-			mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
 
-			rm -f $fichtemp
+		rm -f $fichtemp
 
-		else
+	else
 		rm -rf etc/
 		rm -rf usr/
 		rm -rf var/
@@ -908,9 +921,7 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 		rm -rf platforme/
 		message_erreur_centreon
 		menu
-		fi
 	fi
-
 
 (
  echo "20" ; sleep 1
