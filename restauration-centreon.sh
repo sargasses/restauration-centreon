@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 06-02-2014
+# Date : 07-02-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -191,18 +191,18 @@ mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-ba
 
 sed -i '1d' /tmp/lecture-bases-sauvegarder.txt
 
-lecture_bases_no1=$(sed -n '1p' /tmp/lecture-bases-sauvegarder.txt)
-lecture_bases_no2=$(sed -n '2p' /tmp/lecture-bases-sauvegarder.txt)
-lecture_bases_no3=$(sed -n '3p' /tmp/lecture-bases-sauvegarder.txt)
+lecture_bases_sauvegarder_no1=$(sed -n '1p' /tmp/lecture-bases-sauvegarder.txt)
+lecture_bases_sauvegarder_no2=$(sed -n '2p' /tmp/lecture-bases-sauvegarder.txt)
+lecture_bases_sauvegarder_no3=$(sed -n '3p' /tmp/lecture-bases-sauvegarder.txt)
 rm -f /tmp/lecture-bases-sauvegarder.txt
 rm -f $fichtemp
 
 
 REF20=$lecture_user
 REF21=$lecture_password
-REF22=$lecture_bases_no1
-REF23=$lecture_bases_no2
-REF24=$lecture_bases_no3
+REF22=$lecture_bases_sauvegarder_no1
+REF23=$lecture_bases_sauvegarder_no2
+REF24=$lecture_bases_sauvegarder_no3
 
 }
 
@@ -698,7 +698,7 @@ valret=$?
 choix=`cat $fichtemp`
 case $valret in
 
- 0)	# Confimation Recapitulatif Restauration Centreon (Oui)
+ 0)	# Confirmation Restauration Centreon (Oui)
 	VARSAISI20=$choix_fichier
 	VARSAISI21=$REF20
 	VARSAISI22=$REF21
@@ -712,7 +712,7 @@ case $valret in
 	;;
 
 
- 1)	# Confimation Restauration Centreon (Non)
+ 1)	# Confirmation Restauration Centreon (Non)
 	echo "Appuyé sur Touche (Non)"
 	;;
 
@@ -837,20 +837,20 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 
 	sed -i '1d' /tmp/lecture-bases-supprimer.txt
 
-	bases_no1=$(sed -n '1p' /tmp/lecture-bases-supprimer.txt)
-	bases_no2=$(sed -n '2p' /tmp/lecture-bases-supprimer.txt)
-	bases_no3=$(sed -n '3p' /tmp/lecture-bases-supprimer.txt)
+	bases_supprimer_no1=$(sed -n '1p' /tmp/lecture-bases-supprimer.txt)
+	bases_supprimer_no2=$(sed -n '2p' /tmp/lecture-bases-supprimer.txt)
+	bases_supprimer_no3=$(sed -n '3p' /tmp/lecture-bases-supprimer.txt)
 	rm -f /tmp/lecture-bases-supprimer.txt
 	rm -f $fichtemp
 
 
-	if [ "$bases_no1" != "" ] ||
-	   [ "$bases_no2" != "" ] ||
-	   [ "$bases_no3" != "" ] ; then
+	if [ "$bases_supprimer_no1" != "" ] ||
+	   [ "$bases_supprimer_no2" != "" ] ||
+	   [ "$bases_supprimer_no3" != "" ] ; then
 
 
 		cat <<- EOF > $fichtemp
-		DROP DATABASE IF EXISTS $bases_no1;
+		DROP DATABASE IF EXISTS $bases_supprimer_no1;
 		EOF
 
 		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
@@ -859,7 +859,7 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 
 
 		cat <<- EOF > $fichtemp
-		DROP DATABASE IF EXISTS $bases_no2;
+		DROP DATABASE IF EXISTS $bases_supprimer_no2;
 		EOF
 
 		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
@@ -868,7 +868,7 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 
 
 		cat <<- EOF > $fichtemp
-		DROP DATABASE IF EXISTS $bases_no3;
+		DROP DATABASE IF EXISTS $bases_supprimer_no3;
 		EOF
 
 		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
@@ -877,8 +877,8 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 
 
 		cat <<- EOF > $fichtemp
-		REVOKE ALL PRIVILEGES ON $bases_no1 . * FROM '$utilisateur_centreon'@'localhost';
-		REVOKE GRANT OPTION ON $bases_no1 . * FROM '$utilisateur_centreon'@'localhost';
+		REVOKE ALL PRIVILEGES ON $bases_supprimer_no1 . * FROM '$utilisateur_centreon'@'localhost';
+		REVOKE GRANT OPTION ON $bases_supprimer_no1 . * FROM '$utilisateur_centreon'@'localhost';
 		EOF
 
 		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
@@ -887,8 +887,8 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 
 
 		cat <<- EOF > $fichtemp
-		REVOKE ALL PRIVILEGES ON $bases_no2 . * FROM '$utilisateur_centreon'@'localhost';
-		REVOKE GRANT OPTION ON $bases_no2 . * FROM '$utilisateur_centreon'@'localhost';
+		REVOKE ALL PRIVILEGES ON $bases_supprimer_no2 . * FROM '$utilisateur_centreon'@'localhost';
+		REVOKE GRANT OPTION ON $bases_supprimer_no2 . * FROM '$utilisateur_centreon'@'localhost';
 		EOF
 
 		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
@@ -897,8 +897,8 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 
 
 		cat <<- EOF > $fichtemp
-		REVOKE ALL PRIVILEGES ON $bases_no3 . * FROM '$utilisateur_centreon'@'localhost';
-		REVOKE GRANT OPTION ON $bases_no3 . * FROM '$utilisateur_centreon'@'localhost';
+		REVOKE ALL PRIVILEGES ON $bases_supprimer_no3 . * FROM '$utilisateur_centreon'@'localhost';
+		REVOKE GRANT OPTION ON $bases_supprimer_no3 . * FROM '$utilisateur_centreon'@'localhost';
 		EOF
 
 		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
