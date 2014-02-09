@@ -909,8 +909,8 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 
 
 		cat <<- EOF > $fichtemp
-		REVOKE ALL PRIVILEGES ON $lecture_bases_supprimer_no1 . * FROM $lecture_utilisateur_centreon_local@$lecture_serveur_centreon_local;
-		REVOKE GRANT OPTION ON $lecture_bases_supprimer_no1 . * FROM $lecture_utilisateur_centreon_local@$lecture_serveur_centreon_local;
+		REVOKE ALL PRIVILEGES ON $lecture_bases_supprimer_no1 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
+		REVOKE GRANT OPTION ON $lecture_bases_supprimer_no1 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
 		EOF
 
 		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
@@ -919,8 +919,8 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 
 
 		cat <<- EOF > $fichtemp
-		REVOKE ALL PRIVILEGES ON $lecture_bases_supprimer_no2 . * FROM $lecture_utilisateur_centreon_local@$lecture_serveur_centreon_local;
-		REVOKE GRANT OPTION ON $lecture_bases_supprimer_no2 . * FROM $lecture_utilisateur_centreon_local@$lecture_serveur_centreon_local;
+		REVOKE ALL PRIVILEGES ON $lecture_bases_supprimer_no2 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
+		REVOKE GRANT OPTION ON $lecture_bases_supprimer_no2 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
 		EOF
 
 		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
@@ -929,8 +929,8 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 
 
 		cat <<- EOF > $fichtemp
-		REVOKE ALL PRIVILEGES ON $lecture_bases_supprimer_no3 . * FROM $lecture_utilisateur_centreon_local@$lecture_serveur_centreon_local;
-		REVOKE GRANT OPTION ON $lecture_bases_supprimer_no3 . * FROM $lecture_utilisateur_centreon_local@$lecture_serveur_centreon_local;
+		REVOKE ALL PRIVILEGES ON $lecture_bases_supprimer_no3 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
+		REVOKE GRANT OPTION ON $lecture_bases_supprimer_no3 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
 		EOF
 
 		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
@@ -952,12 +952,13 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 	if [ "$lecture_utilisateur_centreon_local" != "" ] ; then
 
 		cat <<- EOF > $fichtemp
-		DROP USER $lecture_utilisateur_centreon_local@$lecture_serveur_centreon_local;
+		DROP USER '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
 		EOF
 
 		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
 
 		rm -f $fichtemp
+
 	else
 		rm -rf etc/
 		rm -rf usr/
@@ -1042,7 +1043,7 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 
 
 	cat <<- EOF > $fichtemp
-	GRANT ALL PRIVILEGES ON $VARSAISI23 . * TO '$lecture_utilisateur_centreon_distant'@'$lecture_serveur_centreon_distant' WITH GRANT OPTION ;
+	CREATE USER '$lecture_utilisateur_centreon_distant'@'$lecture_serveur_centreon_distant' IDENTIFIED BY '$lecture_password_centreon_distant';
 	EOF
 
 	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
@@ -1051,7 +1052,7 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 
 
 	cat <<- EOF > $fichtemp
-	GRANT ALL PRIVILEGES ON $VARSAISI24 . * TO '$lecture_utilisateur_centreon_distant'@'$lecture_serveur_centreon_distant' WITH GRANT OPTION ;
+	GRANT ALL PRIVILEGES ON $VARSAISI23 . * TO '$lecture_utilisateur_centreon_distant'@'$lecture_serveur_centreon_distant' WITH GRANT OPTION;
 	EOF
 
 	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
@@ -1060,7 +1061,16 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 
 
 	cat <<- EOF > $fichtemp
-	GRANT ALL PRIVILEGES ON $VARSAISI25 . * TO '$lecture_utilisateur_centreon_distant'@'$lecture_serveur_centreon_distant' WITH GRANT OPTION ;
+	GRANT ALL PRIVILEGES ON $VARSAISI24 . * TO '$lecture_utilisateur_centreon_distant'@'$lecture_serveur_centreon_distant' WITH GRANT OPTION;
+	EOF
+
+	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+
+	rm -f $fichtemp
+
+
+	cat <<- EOF > $fichtemp
+	GRANT ALL PRIVILEGES ON $VARSAISI25 . * TO '$lecture_utilisateur_centreon_distant'@'$lecture_serveur_centreon_distant' WITH GRANT OPTION;
 	EOF
 
 	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
