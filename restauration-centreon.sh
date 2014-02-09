@@ -857,8 +857,6 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 	rm -f $fichtemp
 
 
-		
-
 	cat <<- EOF > $fichtemp
 	use mysql;
 	SELECT Db FROM db WHERE User='$lecture_utilisateur_centreon_local';
@@ -1075,7 +1073,6 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 
 	rm -f $fichtemp
 
-
  echo "80" ; sleep 1
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
 
@@ -1084,7 +1081,6 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 	rm -rf var/
 	rm -rf dump-mysql/
 	rm -rf platforme/
-
 
  echo "90" ; sleep 1
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
