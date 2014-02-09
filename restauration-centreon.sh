@@ -969,8 +969,6 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 		menu
 	fi
 
-
-
 (
  echo "20" ; sleep 1
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
