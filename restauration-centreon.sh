@@ -946,7 +946,6 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 	fi
 
 
-
 	if [ "$lecture_utilisateur_centreon_local" != "" ] ; then
 
 		cat <<- EOF > $fichtemp
