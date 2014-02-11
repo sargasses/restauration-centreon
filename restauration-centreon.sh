@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 10-02-2014
+# Date : 11-02-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -303,14 +303,14 @@ rm -f /tmp/erreur
 }
 
 #############################################################################
-# Fonction Message d'erreur platforme
+# Fonction Message d'erreur plateforme
 #############################################################################
 
-message_erreur_platforme()
+message_erreur_plateforme()
 {
 	
 cat <<- EOF > /tmp/erreur
-Veuillez vous assurer que la platforme utiliser
+Veuillez vous assurer que la plateforme utiliser
                  soit correcte
 EOF
 
@@ -735,15 +735,15 @@ menu
 fonction_verification_plateforme()
 {
 
-PLATEFORME_DISTANT=`cat platforme/platforme.txt` 
+PLATEFORME_DISTANT=`cat plateforme/plateforme.txt` 
 
 if [ $PLATEFORME_LOCAL -ne $PLATEFORME_DISTANT ] ; then
 	rm -rf etc/
 	rm -rf usr/
 	rm -rf var/
 	rm -rf dump-mysql/
-	rm -rf platforme/
-	message_erreur_platforme
+	rm -rf plateforme/
+	message_erreur_plateforme
 	menu
 else
 	fonction_verification_engine
@@ -768,7 +768,7 @@ else
 	rm -rf usr/
 	rm -rf var/
 	rm -rf dump-mysql/
-	rm -rf platforme/
+	rm -rf plateforme/
 	message_erreur_centreon
 	menu
 fi
@@ -783,7 +783,7 @@ else
 	rm -rf usr/
 	rm -rf var/
 	rm -rf dump-mysql/
-	rm -rf platforme/
+	rm -rf plateforme/
 	message_erreur_sauvegarde
 	menu
 fi
@@ -793,7 +793,7 @@ if [ "$ENGINE_LOCAL" != "$ENGINE_DISTANT" ] ; then
 	rm -rf usr/
 	rm -rf var/
 	rm -rf dump-mysql/
-	rm -rf platforme/
+	rm -rf plateforme/
 	message_erreur_engine
 	menu
 else
@@ -940,7 +940,7 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 		rm -rf usr/
 		rm -rf var/
 		rm -rf dump-mysql/
-		rm -rf platforme/
+		rm -rf plateforme/
 		message_erreur_centreon
 		menu
 	fi
@@ -961,7 +961,7 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 		rm -rf usr/
 		rm -rf var/
 		rm -rf dump-mysql/
-		rm -rf platforme/
+		rm -rf plateforme/
 		message_erreur_centreon
 		menu
 	fi
@@ -1079,7 +1079,7 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 	rm -rf usr/
 	rm -rf var/
 	rm -rf dump-mysql/
-	rm -rf platforme/
+	rm -rf plateforme/
 
  echo "90" ; sleep 1
  echo "XXX" ; echo "Restauration en cours veuillez patienter"; echo "XXX"
