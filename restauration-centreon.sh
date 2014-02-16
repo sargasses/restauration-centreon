@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 12-02-2014
+# Date : 16-02-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -856,103 +856,102 @@ $DIALOG --backtitle "Configuration Restauration Centreon" \
 	rm -f $fichtemp
 
 
-	cat <<- EOF > $fichtemp
-	use mysql;
-	SELECT Db FROM db WHERE User='$lecture_utilisateur_centreon_local';
-	EOF
-
-	mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp > /tmp/lecture-bases-supprimer.txt
-
-
-	sed -i '1d' /tmp/lecture-bases-supprimer.txt
-
-	lecture_bases_supprimer_no1=$(sed -n '1p' /tmp/lecture-bases-supprimer.txt)
-	lecture_bases_supprimer_no2=$(sed -n '2p' /tmp/lecture-bases-supprimer.txt)
-	lecture_bases_supprimer_no3=$(sed -n '3p' /tmp/lecture-bases-supprimer.txt)
-	rm -f /tmp/lecture-bases-supprimer.txt
-	rm -f $fichtemp
-
-
-	if [ "$lecture_bases_supprimer_no1" != "" ] ||
-	   [ "$lecture_bases_supprimer_no2" != "" ] ||
-	   [ "$lecture_bases_supprimer_no3" != "" ] ; then
-
-
-		cat <<- EOF > $fichtemp
-		DROP DATABASE IF EXISTS $lecture_bases_supprimer_no1;
-		EOF
-
-		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
-
-		rm -f $fichtemp
-
-
-		cat <<- EOF > $fichtemp
-		DROP DATABASE IF EXISTS $lecture_bases_supprimer_no2;
-		EOF
-
-		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
-
-		rm -f $fichtemp
-
-
-		cat <<- EOF > $fichtemp
-		DROP DATABASE IF EXISTS $lecture_bases_supprimer_no3;
-		EOF
-
-		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
-
-		rm -f $fichtemp
-
-
-		cat <<- EOF > $fichtemp
-		REVOKE ALL PRIVILEGES ON $lecture_bases_supprimer_no1 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
-		REVOKE GRANT OPTION ON $lecture_bases_supprimer_no1 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
-		EOF
-
-		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
-
-		rm -f $fichtemp
-
-
-		cat <<- EOF > $fichtemp
-		REVOKE ALL PRIVILEGES ON $lecture_bases_supprimer_no2 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
-		REVOKE GRANT OPTION ON $lecture_bases_supprimer_no2 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
-		EOF
-
-		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
-
-		rm -f $fichtemp
-
-
-		cat <<- EOF > $fichtemp
-		REVOKE ALL PRIVILEGES ON $lecture_bases_supprimer_no3 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
-		REVOKE GRANT OPTION ON $lecture_bases_supprimer_no3 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
-		EOF
-
-		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
-
-		rm -f $fichtemp
-
-	else
-		rm -rf etc/
-		rm -rf usr/
-		rm -rf var/
-		rm -rf dump-mysql/
-		rm -rf plateforme/
-		message_erreur_centreon
-		menu
-	fi
-
-
 	if [ "$lecture_utilisateur_centreon_local" != "" ] ; then
+
+		cat <<- EOF > $fichtemp
+		use mysql;
+		SELECT Db FROM db WHERE User='$lecture_utilisateur_centreon_local';
+		EOF
+
+		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp > /tmp/lecture-bases-supprimer.txt
+
+
+		sed -i '1d' /tmp/lecture-bases-supprimer.txt
+
+		lecture_bases_supprimer_no1=$(sed -n '1p' /tmp/lecture-bases-supprimer.txt)
+		lecture_bases_supprimer_no2=$(sed -n '2p' /tmp/lecture-bases-supprimer.txt)
+		lecture_bases_supprimer_no3=$(sed -n '3p' /tmp/lecture-bases-supprimer.txt)
+		rm -f /tmp/lecture-bases-supprimer.txt
+		rm -f $fichtemp
+
+
+		if [ "$lecture_bases_supprimer_no1" != "" ] ||
+	          [ "$lecture_bases_supprimer_no2" != "" ] ||
+	          [ "$lecture_bases_supprimer_no3" != "" ] ; then
+
+
+			cat <<- EOF > $fichtemp
+			DROP DATABASE IF EXISTS $lecture_bases_supprimer_no1;
+			EOF
+
+			mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+
+			rm -f $fichtemp
+
+
+			cat <<- EOF > $fichtemp
+			DROP DATABASE IF EXISTS $lecture_bases_supprimer_no2;
+			EOF
+
+			mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+
+			rm -f $fichtemp
+
+
+			cat <<- EOF > $fichtemp
+			DROP DATABASE IF EXISTS $lecture_bases_supprimer_no3;
+			EOF
+
+			mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+
+			rm -f $fichtemp
+
+
+			cat <<- EOF > $fichtemp
+			REVOKE ALL PRIVILEGES ON $lecture_bases_supprimer_no1 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
+			REVOKE GRANT OPTION ON $lecture_bases_supprimer_no1 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
+			EOF
+
+			mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+
+			rm -f $fichtemp
+
+
+			cat <<- EOF > $fichtemp
+			REVOKE ALL PRIVILEGES ON $lecture_bases_supprimer_no2 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
+			REVOKE GRANT OPTION ON $lecture_bases_supprimer_no2 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
+			EOF
+
+			mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+
+			rm -f $fichtemp
+
+
+			cat <<- EOF > $fichtemp
+			REVOKE ALL PRIVILEGES ON $lecture_bases_supprimer_no3 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
+			REVOKE GRANT OPTION ON $lecture_bases_supprimer_no3 . * FROM '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
+			EOF
+
+			mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
+
+			rm -f $fichtemp
+
+		else
+			rm -rf etc/
+			rm -rf usr/
+			rm -rf var/
+			rm -rf dump-mysql/
+			rm -rf plateforme/
+			message_erreur_centreon
+			menu
+		fi
+
 
 		cat <<- EOF > $fichtemp
 		DROP USER '$lecture_utilisateur_centreon_local'@'$lecture_serveur_centreon_local';
 		EOF
 
 		mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 < $fichtemp
-
 		rm -f $fichtemp
 
 	else
