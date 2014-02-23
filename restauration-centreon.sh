@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 16-02-2014
+# Date : 23-02-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -684,7 +684,7 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 $DIALOG --backtitle "Configuration Restauration Centreon" \
 	 --colors \
 	 --title "Confirmation Restauration Centreon" \
-	 --menu "Quel est votre choix" 8 60 0 \
+	 --menu "Quel est votre choix" 8 66 0 \
 	 "Fichier de Sauvegarde:"    "\Z2$choix_fichier" \
 	 "Utilisateur de la Base:"   "\Z2$REF20\Zn" \
 	 "Password de la Base:"      "\Z2$REF21\Zn" \
