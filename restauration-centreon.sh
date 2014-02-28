@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 23-02-2014
+# Date : 28-02-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -162,10 +162,10 @@ from sauvegarde_bases
 where uname='`uname -n`' and application='centreon' ;
 EOF
 
-mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-user.txt
+mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-user-local.txt
 
-lecture_user=$(sed '$!d' /tmp/lecture-user.txt)
-rm -f /tmp/lecture-user.txt
+lecture_user_local=$(sed '$!d' /tmp/lecture-user-local.txt)
+rm -f /tmp/lecture-user-local.txt
 rm -f $fichtemp
 
 cat <<- EOF > $fichtemp
@@ -174,10 +174,10 @@ from sauvegarde_bases
 where uname='`uname -n`' and application='centreon' ;
 EOF
 
-mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-password.txt
+mysql -h $VAR10 -P $VAR11 -u $VAR13 -p$VAR14 $VAR12 < $fichtemp >/tmp/lecture-password-local.txt
 
-lecture_password=$(sed '$!d' /tmp/lecture-password.txt)
-rm -f /tmp/lecture-password.txt
+lecture_password_local=$(sed '$!d' /tmp/lecture-password-local.txt)
+rm -f /tmp/lecture-password-local.txt
 rm -f $fichtemp
 
 
@@ -198,8 +198,8 @@ rm -f /tmp/lecture-bases-sauvegarder.txt
 rm -f $fichtemp
 
 
-REF20=$lecture_user
-REF21=$lecture_password
+REF20=$lecture_user_local
+REF21=$lecture_password_local
 REF22=$lecture_bases_sauvegarder_no1
 REF23=$lecture_bases_sauvegarder_no2
 REF24=$lecture_bases_sauvegarder_no3
