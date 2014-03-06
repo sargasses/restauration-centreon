@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 28-02-2014
+# Date : 06-03-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -303,6 +303,31 @@ rm -f /tmp/erreur
 }
 
 #############################################################################
+# Fonction Message d'erreur version centreon
+#############################################################################
+
+message_erreur_version_centreon()
+{
+	
+cat <<- EOF > /tmp/erreur
+Veuillez vous assurer que les versions de centreon
+       soit identique sur les deux serveurs
+EOF
+
+erreur=`cat /tmp/erreur`
+
+$DIALOG --ok-label "Quitter" \
+	 --colors \
+	 --backtitle "Configuration Restauration Centreon" \
+	 --title "Erreur" \
+	 --msgbox  "\Z1$erreur\Zn" 6 54 
+
+rm -f /tmp/erreur
+
+}
+
+
+#############################################################################
 # Fonction Message d'erreur plateforme
 #############################################################################
 
@@ -530,7 +555,7 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 $DIALOG --backtitle "Configuration Restauration Centreon" \
 	 --title "Configuration Restauration Centreon" \
 	 --form "Quel est votre choix" 9 60 1 \
-	 "Restauration Serveur:"  1 1  "`uname -n`" 1 23 31 18 2> $fichtemp
+	 "Restauration Serveur:"  1 1  "`uname -n`" 1 23 31 30 2> $fichtemp
 
 
 valret=$?
@@ -707,7 +732,7 @@ case $valret in
 
 	tar xvzf $VARSAISI20 &> /dev/null
 	rm -f $fichtemp
-	fonction_verification_plateforme
+	fonction_verification_version_centreon
 	;;
 
 
@@ -724,6 +749,63 @@ esac
 rm -f $fichtemp
 
 menu
+
+}
+
+#############################################################################
+# Fonction Verification Version Centreon
+#############################################################################
+
+fonction_verification_version_centreon()
+{
+
+fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
+
+if [ -f /etc/centreon/centreon.conf.php ] ; then
+	grep -w "db" /etc/centreon/centreon.conf.php > $fichtemp
+	sed -n 's/.* =\ \(.*\);.*/\1/ip' $fichtemp > /tmp/lecture-base-centreon-local.txt 
+	sed -i 's/\"//g' /tmp/lecture-base-centreon-local.txt
+	base_centreon_local=`cat /tmp/lecture-base-centreon-local.txt`
+	rm -f /tmp/lecture-base-centreon-local.txt
+	rm -f $fichtemp
+else
+	rm -rf etc/
+	rm -rf usr/
+	rm -rf var/
+	rm -rf dump-mysql/
+	rm -rf plateforme/
+	message_erreur_centreon
+	menu
+fi
+
+
+cat <<- EOF > $fichtemp
+select value
+from informations ;
+EOF
+
+mysql -h `uname -n` -u $VARSAISI21 -p$VARSAISI22 $base_centreon_local < $fichtemp >/tmp/lecture-version-centreon.txt
+
+lecture_version_centreon=$(sed '$!d' /tmp/lecture-version-centreon.txt)
+rm -f /tmp/lecture-version-centreon.txt
+rm -f $fichtemp
+
+
+VERSION_CENTREON_LOCAL=$lecture_version_centreon
+VERSION_CENTREON_DISTANT=`cat plateforme/centreon.txt` 
+
+
+if [ "$VERSION_CENTREON_LOCAL" != "$VERSION_CENTREON_DISTANT" ] ; then
+	rm -rf etc/
+	rm -rf usr/
+	rm -rf var/
+	rm -rf dump-mysql/
+	rm -rf plateforme/
+	message_erreur_version_centreon
+	menu
+else
+	fonction_verification_plateforme
+fi
 
 }
 
