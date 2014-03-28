@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 27-03-2014
+# Date : 28-03-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -667,7 +667,6 @@ case $valret in
 		message_erreur_fichier
 		menu
 	fi
-
 	;;
 
  1)	# Appuyé sur Touche CTRL C
@@ -726,7 +725,6 @@ case $valret in
 	rm -f $fichtemp
 	fonction_verification_version_centreon
 	;;
-
 
  1)	# Confirmation Restauration Centreon (Non)
 	echo "Appuyé sur Touche (Non)"
