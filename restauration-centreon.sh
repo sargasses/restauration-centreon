@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 28-03-2014
+# Date : 31-03-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -139,7 +139,7 @@ else
 fi
 
 if [ "$VAR14" = "" ] ; then
-	REF14=directory
+	REF14=password
 else
 	REF14=$VAR14
 fi
