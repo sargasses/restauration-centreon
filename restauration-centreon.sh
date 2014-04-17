@@ -2,7 +2,7 @@
 #
 # Copyright 2013-2014 
 # Développé par : Stéphane HACQUARD
-# Date : 31-03-2014
+# Date : 17-04-2014
 # Version 1.0
 # Pour plus de renseignements : stephane.hacquard@sargasses.fr
 
@@ -650,7 +650,7 @@ fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 $DIALOG --backtitle "Configuration Restauration Centreon" \
 	 --title "Configuration Restauration Centreon" \
 	 --form "Quel est votre choix" 9 60 1 \
-	 "Fichier de Sauvegarde:"  1 1  "centreon-$DATE_HEURE.tgz" 1 24 30 28  2> $fichtemp
+	 "Fichier de Sauvegarde:"  1 1  "Centreon-$DATE_HEURE.tgz" 1 24 30 28  2> $fichtemp
 
 
 valret=$?
@@ -721,7 +721,6 @@ case $valret in
 	VARSAISI25=$REF24
 
 	tar xvzf $VARSAISI20 &> /dev/null
-	mv dump-mysql* dump-mysql
 	rm -f $fichtemp
 	fonction_verification_version_centreon
 	;;
